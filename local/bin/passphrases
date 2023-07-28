@@ -1,0 +1,59 @@
+#!/bin/bash
+
+set -eu
+
+if ! command -v xkcdpass >/dev/null 2>&1; then
+  echo 'xkcdpass is not installed on this system!'
+  exit 1
+fi
+
+if ! command -v sponge >/dev/null 2>&1; then
+  echo 'sponge (moreutils package) is not installed on this system!'
+  exit 1
+fi
+
+if ! command -v bc >/dev/null 2>&1; then
+  echo 'bc is not installed on this system!'
+  exit 1
+fi
+
+if ! [ -f "$HOME/.local/lib/bc/ceil.bc" ]; then
+  echo 'bc is missing ceil function file.'
+  exit 1
+fi
+
+if [[ $BC_ENV_ARGS != *"ceil.bc"* ]]; then
+  echo 'BC_ENV_ARGS is missing ceil file reference.'
+  exit 1
+fi
+
+WORD_COUNT=3
+# DELIMITER_TYPE=(--random-delimiters --valid-delimiters='23456789%&*-+$')
+DELIMITER_TYPE=--delimiter=-
+#DELIMITER_TYPE=(--random-delimiters --valid-delimiters='23456789')
+EXPECTED_DELIMITER_COUNT=$(( $WORD_COUNT - 1 ))
+# CASE_TYPE=--case=lower # Or "random" for more entropy
+CASE_TYPE=--case=lower
+# Half of the default wordlist has 8+ chars, but only 20% has 9+
+WORD_LENGTH_MAX=10
+WORD_LENGTH_MAX_AVG=6
+# Avoid having passphrases filled with too many long words.
+PASSPHRASE_LENGTH=$(echo "scale = 0; ceil( ($WORD_COUNT * $WORD_LENGTH_MAX_AVG) + ($WORD_COUNT - 1) )" | bc -l)
+
+set -x
+
+# 500 count will result in an average of 15+ "good" passwords after filtering for low word counts
+# Higher count is needed for larger word counts, thanks to the randomness of password generation.
+xkcdpass --count=500 --min=3 --max=$WORD_LENGTH_MAX --numwords=$WORD_COUNT "${DELIMITER_TYPE[@]}" $CASE_TYPE | \
+  # Filtering commands require the entire list to be sent together instead of the stream xkcdpass outputs
+  sponge | \
+  # Remove separators from the beginning/end of each passphrase
+  sed --regexp-extended 's/^[^a-z]//gi; s/[^a-z]$//gi' | \
+  # Make sure passphrase always contains delimiters when "random-delimiters" flag decides to omit them.
+  grep --extended-regexp "([^a-z][a-z]+){$EXPECTED_DELIMITER_COUNT}" | \
+  # Exclude results with too many long words (based on average word length)
+  sed '/^.\{'"$PASSPHRASE_LENGTH"',\}$/d' | \
+  # Exclude results with double letters sequentially, even if there's a separator between them.
+  grep --extended-regexp --invert-match --ignore-case '(.)[^a-z]?\1{1}' | \
+  # Reduce decision fatigue in output.
+  head -n15

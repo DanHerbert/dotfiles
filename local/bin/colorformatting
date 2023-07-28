@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# For ANSI codes reference, see:
+# https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
+
+# ANSI Default Background code
+clbg=49
+
+# Heading row
+echo -en "\e[7;16m Formatting:    \e[0m"
+for attr in 0 1 2 4 7 ; do
+    fmtLabel='UNLABELED'
+    case $attr in
+        0) fmtLabel='None       ';;
+        1) fmtLabel='Bold       ';;
+        2) fmtLabel='Dim       ';;
+        4) fmtLabel='Underlined ';;
+        7) fmtLabel='Inverted   ';;
+    esac
+    echo -en "\e[7;16m$fmtLabel \e[0m"
+done
+echo # Newline
+
+#Foreground
+for clfg in {30..37} {90..97} 39 ; do
+    fgLabel='UNLABLED'
+    case $clfg in
+        30) fgLabel='basic black  ';;
+        31) fgLabel='basic red    ';;
+        32) fgLabel='basic green  ';;
+        33) fgLabel='basic yellow ';;
+        34) fgLabel='basic blue   ';;
+        35) fgLabel='basic magenta';;
+        36) fgLabel='basic cyan   ';;
+        37) fgLabel='basic white  ';;
+        90) fgLabel='light black  ';;
+        91) fgLabel='light red    ';;
+        92) fgLabel='light green  ';;
+        93) fgLabel='light yellow ';;
+        94) fgLabel='light blue   ';;
+        95) fgLabel='light magenta';;
+        96) fgLabel='light cyan   ';;
+        97) fgLabel='light white  ';;
+        39) fgLabel='default fg   ';;
+    esac
+    echo -en "\e[7;16m $fgLabel \e[0m"
+    #Formatting
+    for attr in 0 1 2 4 7 ; do
+        #Print the result
+        echo -en "\e[${attr};${clbg};${clfg}m ^[${attr};${clbg};${clfg}m \e[0m"
+    done
+    echo #Newline
+done
+echo 'bg color codes are exactly +10 of the fg codes.'

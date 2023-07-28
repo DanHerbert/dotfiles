@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+echo -n " "
+if command -v tput 2>&1 >/dev/null;then
+    echo -en "$(tput setab 0) $(printf "%03d" 0) $(tput sgr0)\n "
+    for type in 'setab' 'setaf'; do
+        for color in $(seq 1 $(tput colors)); do
+            echo -en "$(tput $type $color) $(printf "%03d" $color) $(tput sgr0)"
+            if [[ $color -le 16 ]] && [ $(($color % 8)) == 0 ]; then
+                echo #New line
+                echo -n " "
+            elif [[ $color -gt 17 ]] && [[ $((($color - 16) % 16)) == 0 ]]; then
+                echo #New line
+                echo -n " "
+            fi
+        done
+        echo #New line
+        echo -n " "
+    done
+    echo
+else
+  echo "Terminal has no color support, or doesn't have tput available."
+fi
