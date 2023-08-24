@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
 echo -n " "
-if command -v tput 2>&1 >/dev/null;then
+if command -v tput > /dev/null 2>&1; then
     echo -en "$(tput setab 0) $(printf "%03d" 0) $(tput sgr0)\n "
     for type in 'setab' 'setaf'; do
         for color in $(seq 1 $(tput colors)); do
@@ -18,5 +18,5 @@ if command -v tput 2>&1 >/dev/null;then
     done
     echo
 else
-  echo "Terminal has no color support, or doesn't have tput available."
+    echo "Terminal has no color support, or doesn't have tput available."
 fi
