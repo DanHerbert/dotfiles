@@ -30,7 +30,7 @@ export EDITOR='/usr/bin/vim'
 export VISUAL="$HOME/.local/bin/codium"
 export TERM='xterm-256color'
 # Not so sure about these colors...
-export LS_COLORS='no=0:di=01;35:ln=01;36:ex=01;32:so=36:pi=37:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;41:mi=1;47;39';
+export LS_COLORS='no=0:di=01;35:ln=01;36:ex=01;32:so=36:pi=37:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;41:mi=1;47;39'
 
 typeset -U path PATH
 path=("$HOME/.local/bin" "$path[@]")
@@ -57,9 +57,8 @@ alias ga='echo "Missing a space between g & a"'
 alias cm='echo "Missing \"g\" prefix"'
 alias gp='echo "Use \"g pl\" or \"g ps\" instead"'
 alias gd='echo "Use \"g d\" instead."'
+alias gdc='echo "Use \"g dc\" instead."'
 alias subl='echo "Use code instead"'
-
-
 
 ACCOUNT_TYPE_STYLE='%{%F{221}%}' # Muted yellow
 DIRECTORY_STYLE='%{%F{65}%}%' # Muted green
