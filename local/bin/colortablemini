@@ -1,0 +1,15 @@
+#!/bin/bash
+echo -n " "
+if command -v tput > /dev/null 2>&1; then
+    echo -en "$(tput setab 0) $(printf "%03d" 0) $(tput sgr0)\n "
+    for color in $(seq 1 16); do
+        echo -en "$(tput setab $color) $(printf "%03d" $color) $(tput sgr0)"
+        if [[ $color -eq 8 ]]; then
+            echo #New line
+            echo -n " "
+        fi
+    done
+    echo #New line
+else
+    echo "Terminal has no color support, or doesn't have tput available."
+fi
