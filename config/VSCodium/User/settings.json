@@ -1,0 +1,42 @@
+{
+    "workbench.colorTheme": "Tomorrow Night Eighties",
+    "redhat.telemetry.enabled": false,
+    "editor.rulers": [
+        80, 100, 120
+    ],
+    "editor.fontFamily": "Inconsolata, \"Iosevka fixed\", sarasa-gothic, monospace",
+    "editor.renderWhitespace": "all",
+    "editor.wrappingIndent": "indent",
+    "editor.fontSize": 20,
+    "editor.tabSize": 2,
+    "editor.minimap.enabled": false,
+    "editor.detectIndentation": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "[shellscript]": {
+        "editor.tabSize": 4,
+        "editor.defaultFormatter": "mkhl.shfmt"
+    },
+    "[python]": {
+        "editor.tabSize": 4,
+        "editor.defaultFormatter": "ms-python.python"
+    },
+    "[html]": {
+        "editor.tabSize": 4,
+        "editor.defaultFormatter": "vscode.html-language-features"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[markdown]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[go]": {
+        "editor.insertSpaces": false,
+        "editor.tabSize": 4
+    }
+}
