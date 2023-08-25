@@ -34,8 +34,17 @@ DELIMITER_TYPE=--delimiter=-
 EXPECTED_DELIMITER_COUNT=$((WORD_COUNT - 1))
 # CASE_TYPE=--case=lower # Or "random" for more entropy
 CASE_TYPE=--case=lower
-# Half of the default wordlist has 8+ chars, but only 20% has 9+
-WORD_LENGTH_MAX=10
+# Use caution when changing the max word size.
+# As shown below, every step down cuts the wordlist size by a lot.
+# Wordlist size by max chars:
+# ≤3chars:   82  (1.0545%)
+# ≤4chars:  549  (7.06%)
+# ≤5chars: 1477  (19%)
+# ≤6chars: 2849  (37%)
+# ≤7chars: 4440  (57%)
+# ≤8chars: 6219  (80%)
+#  9chars: 7776  (100%)
+WORD_LENGTH_MAX=9
 WORD_LENGTH_MAX_AVG=6
 # Avoid having passphrases filled with too many long words.
 PASSPHRASE_LENGTH=$(echo "scale = 0; ceil( ($WORD_COUNT * $WORD_LENGTH_MAX_AVG) + ($WORD_COUNT - 1) )" | bc -l)
