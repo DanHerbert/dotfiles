@@ -1,0 +1,11 @@
+#!/bin/bash
+
+alias statusWithColor='git -c color.ui=always status'
+
+headName=$(git rev-parse --abbrev-ref --symbolic-full-name HEAD 2>/dev/null)
+
+if [[ "$headName" == "HEAD" ]]; then
+    statusWithColor | head -n1 && statusWithColor --short
+else
+    statusWithColor --branch --short
+fi
