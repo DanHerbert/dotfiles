@@ -37,7 +37,7 @@ path=("$HOME/.local/bin" "$path[@]")
 
 
 if [ -d "$HOME/.local/lib/bc.d" ]; then
-    for file in "$HOME/.local/lib/bc.d/*.bc"; do
+    for file in "$HOME"/.local/lib/bc.d/*.bc; do
         BC_ENV_ARGS="$file $BC_ENV_ARGS "
     done
     export BC_ENV_ARGS
