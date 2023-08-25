@@ -1,0 +1,18 @@
+[misc]
+# Using defaults for everything.
+
+[git]
+repos = [
+   "~/Documents/code/lessh"
+]
+# Only pull the repos listed above.
+pull_predefined = false
+# Arguments to pass Git when pulling Repositories
+arguments = "--rebase --autostash"
+
+[linux]
+# I use paru for AUR but this option feels more evergreen.
+arch_package_manager = "autodetect"
+
+[firmware]
+upgrade = true
