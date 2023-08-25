@@ -1,54 +1,60 @@
 #!/usr/bin/zsh
 
-HISTFILE=$HOME/.histfile
-HISTSIZE=10000
-SAVEHIST=10000
-
-# Emacs keybindings (-v would be vim keybindings)
-bindkey -e
-
 zstyle :compinstall filename "$HOME/.zshrc"
 
 autoload -Uz compinit
 compinit -u
 
+setopt histexpiredupsfirst
+setopt histfindnodups
+setopt histignorealldups
+setopt histignoredups
+setopt histignorespace
+setopt histnostore
+setopt histreduceblanks
+setopt histsavenodups
+setopt incappendhistory
+setopt promptsubst
+setopt sharehistory
+
+# Emacs keybindings
+bindkey -e
 autoload edit-command-line
 zle -N edit-command-line
 bindkey '^X^E' edit-command-line
 bindkey '^R' history-incremental-search-backward
+# These might be terminal emulator specific
+bindkey  "^[[H"   beginning-of-line
+bindkey  "^[[F"   end-of-line
+bindkey  "^[[3~"  delete-char
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
 
-setopt inc_append_history
-setopt share_history
-setopt prompt_subst
-setopt HIST_IGNORE_SPACE
-setopt HIST_NO_STORE
-setopt HIST_REDUCE_BLANKS
-setopt HIST_IGNORE_DUPS
-setopt PROMPT_SUBST
-
+export HISTFILE=$HOME/.histfile
+export HISTSIZE=10000
+export SAVEHIST=10000
 export EDITOR='/usr/bin/vim'
 export VISUAL="$HOME/.local/bin/codium"
 export TERM='xterm-256color'
 # Generated using https://geoff.greer.fm/lscolors/
 export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
 
-typeset -U path PATH
-path=("$HOME/.local/bin" "$path[@]")
-
-
-if [ -d "$HOME/.local/lib/bc.d" ]; then
+if [[ -d "$HOME/.local/lib/bc.d" ]]; then
     for file in "$HOME"/.local/lib/bc.d/*.bc; do
         BC_ENV_ARGS="$file $BC_ENV_ARGS "
     done
     export BC_ENV_ARGS
 fi
 
+typeset -U path PATH
+path=("$HOME/.local/bin" "$path[@]")
+
 alias py3='python3'
 
-# LS_COLORS must also be exported for this to work.
+# Environment variable LS_COLORS must also exist for this to work.
 alias ls='ls --color=auto -p'
 alias lsc='ls --color=auto --group-directories-first -Apv'
-# Ensure diff defaults to using color.
+# Force diff to use color by default.
 alias diff='diff --color'
 
 alias code="$HOME/.local/bin/codium"
