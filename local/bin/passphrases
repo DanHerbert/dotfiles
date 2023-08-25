@@ -17,7 +17,7 @@ if ! command -v bc > /dev/null 2>&1; then
     exit 1
 fi
 
-if ! [ -f "$HOME/.local/lib/bc/ceil.bc" ]; then
+if ! [ -f "$HOME/.local/lib/bc.d/ceil.bc" ]; then
     echo 'bc is missing ceil function file.'
     exit 1
 fi

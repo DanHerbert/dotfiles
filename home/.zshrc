@@ -36,8 +36,11 @@ typeset -U path PATH
 path=("$HOME/.local/bin" "$path[@]")
 
 
-if [ -d "$HOME/.local/lib/bc" ]; then
-  export BC_ENV_ARGS="$HOME/.local/lib/bc/ceil.bc "
+if [ -d "$HOME/.local/lib/bc.d" ]; then
+    for file in "$HOME/.local/lib/bc.d/*.bc"; do
+        BC_ENV_ARGS="$file $BC_ENV_ARGS "
+    done
+    export BC_ENV_ARGS
 fi
 
 alias py3='python3'
@@ -72,9 +75,9 @@ MACHINE_STYLE='%{%F{009}%}' # Muted light red
 
 # root user styles.
 if [[ $EUID == 0 ]]; then
-  USER_STYLE='%{%B%F{255}%K{196}%}' # Bright red
-  ACCOUNT_TYPE_STYLE='%{%B%F{200}%}%#' # Hot pink
-  DIRECTORY_STYLE='%{%F{54}%}%' # Muted purple
+    USER_STYLE='%{%B%F{255}%K{196}%}' # Bright red
+    ACCOUNT_TYPE_STYLE='%{%B%F{200}%}%#' # Hot pink
+    DIRECTORY_STYLE='%{%F{54}%}%' # Muted purple
 fi
 
 autoload -Uz vcs_info
