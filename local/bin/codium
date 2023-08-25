@@ -1,0 +1,25 @@
+#!/bin/bash
+# Based on https://aur.archlinux.org/pkgbase/electron-blur-me-not
+
+# Wrapper launcher script for VSCodium to ensure the codium-flags.conf file gets
+# loaded correcly with the codium app.
+# Errors during launch are logged to ~/.local/var/log/codium-errors.log
+
+XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-~/.config}
+flags_file="$XDG_CONFIG_HOME/codium-flags.conf"
+flags=()
+
+# Allow users to override command-line options
+if [[ -f "$flags_file" ]]; then
+    if [[ -e "$flags_file" ]]; then
+        while read -r flag; do
+            if [[ "${flag}" != *(' ')'#'* ]]; then
+            flags+=("${flag}")
+            fi
+        done < "$flags_file"
+    fi
+fi
+
+# Launch
+# shellcheck disable=SC2068
+exec /opt/vscodium-bin/bin/codium ${flags[@]} "$@" 2> >(ts '[%Y-%m-%dT%H:%M:%S]' >> "$HOME/.local/var/log/codium-errors.log")
