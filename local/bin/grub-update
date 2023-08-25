@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Passthrough if the command exists (which is true on most other systems)
+if [[ -x '/usr/bin/grub-update' ]]; then
+    /usr/bin/grub-update "$@"
+    exit $?
+fi
+if ! command -v grub-install &> /dev/null || ! command -v grub-mkconfig &> /dev/null; then
+    echo 'It looks like grub is not installed on this system?'
+    exit 1
+fi
+if ! [[ -f '/etc/arch-release' ]]; then
+    echo 'This helper script only runs on Arch Linux'
+    exit 1
+fi
+if ! [[ -d '/efi' ]]; then
+    echo 'No EFI system partition found. This helper script requires that.'
+    exit 1
+fi
+if [[ $(uname -m) != 'x86_64' ]]; then
+    echo 'System is using wrong architecture for this helper script.'
+    exit 1
+fi
+if ! [[ -d "/boot/grub/" ]]; then
+    echo 'It looks like there is no "/boot/grub/" directory on this system?'
+    exit 1
+fi
+if [[ $EUID -ne 0 ]]; then
+    echo 'This command must be run as root'
+    exit 1
+fi
+
+set -eux
+
+grub-install --efi-directory=/efi --bootloader-id=GRUB --recheck
+grub-mkconfig -o /boot/grub/grub.cfg
