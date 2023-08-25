@@ -3,7 +3,7 @@
 
 [git]
 repos = [
-   "~/Documents/code/lessh"
+   "~/Documents/code/dotfiles"
 ]
 # Only pull the repos listed above.
 pull_predefined = false
@@ -15,4 +15,4 @@ arguments = "--rebase --autostash"
 arch_package_manager = "autodetect"
 
 [firmware]
-upgrade = true
+upgrade = false
