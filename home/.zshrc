@@ -29,8 +29,8 @@ setopt PROMPT_SUBST
 export EDITOR='/usr/bin/vim'
 export VISUAL="$HOME/.local/bin/codium"
 export TERM='xterm-256color'
-# Not so sure about these colors...
-export LS_COLORS='no=0:di=01;35:ln=01;36:ex=01;32:so=36:pi=37:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;41:mi=1;47;39'
+# Generated using https://geoff.greer.fm/lscolors/
+export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
 
 typeset -U path PATH
 path=("$HOME/.local/bin" "$path[@]")
