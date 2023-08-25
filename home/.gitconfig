@@ -1,0 +1,34 @@
+[core]
+    editor = /usr/bin/vim
+
+[user]
+    name = Dan Herbert
+    email = forgot-to-set-project-specific-contact-email@hrbrt.co
+
+[init]
+    defaultBranch = main
+
+[color "status"]
+    removed = 1 # Red
+    added = 2 # Green
+    changed = 3 # Yellow
+    branch = 4 # Blue
+    untracked = 8 # Gray
+    nobranch = 196 # Very bright red
+    unmerged = 208 # Very bright orange
+
+[color "diff"]
+    old = 1 # Red
+    new = 2 # Green
+    meta = 4 # Blue
+    frag = 5 # Purple
+    context = 8 # Gray
+
+[alias]
+    a = add
+    d = diff
+    dc = diff --cached
+    cm = commit
+    co = checkout
+    pl = pull
+    ps = push
