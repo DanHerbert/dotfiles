@@ -25,14 +25,6 @@ if ! command -v stow 2> /dev/null; then
     exit 1
 fi
 
-SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
-
-hook_origin="$SCRIPT_DIR/git-hook-post-checkout.sh"
-hook_dest="$SCRIPT_DIR/.git/hooks/post-checkout"
-if [ ! -e "$hook_dest" ] && [ ! -L "$hook_dest" ]; then
-    ln -s "$hook_origin" "$hook_dest"
-fi
-
 set -v
 stow --target="$HOME/.config" config
 stow --target="$HOME/.local" local
