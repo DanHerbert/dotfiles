@@ -14,11 +14,11 @@ current_branch="$(git branch --show-current)"
 git_failed=$?
 if [ "$git_failed" != 0 ]; then
     echo "Bad git ownership detected. Doing nothing."
-    # Project owner
+    echo 'Project user'
     stat -c '%U' "$PROJECT_ROOT"
-    # Script user
+    echo 'Script user'
     id -u -n
-    # Current safe directories
+    echo 'Current safe directories'
     git --no-pager config --show-origin --get-all safe.directory
     exit 1
 fi
