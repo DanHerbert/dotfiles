@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+set -ev
 
 SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 GIT_WORK_TREE=$(cd "$SCRIPT_DIR"; git rev-parse --show-toplevel)
