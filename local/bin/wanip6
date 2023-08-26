@@ -1,3 +1,0 @@
-#!/bin/dash
-
-curl --write-out '\n' --silent 'https://ipv6.dan.herbert.io/remote_addr'

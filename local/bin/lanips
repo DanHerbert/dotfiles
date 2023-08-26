@@ -1,3 +1,0 @@
-#!/bin/dash
-
-/usr/bin/ip -o addr show scope global | awk '{gsub(/\/.*/,"",$4); print $4}'

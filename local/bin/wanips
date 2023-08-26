@@ -1,4 +1,0 @@
-#!/bin/dash
-
-"$HOME/.local/bin/wanip"
-"$HOME/.local/bin/wanip6"
