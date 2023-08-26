@@ -8,12 +8,6 @@ if ! command -v stow > /dev/null 2>&1; then
     exit 1
 fi
 
-# Ensure a few folders really exist so that stow doesn't mess things up by
-# trying to make them symlinks.
-if [ ! -d "$HOME/.config" ]; then
-    mkdir -p "$HOME/.config"
-fi
-
 # vim plugins are the 1 thing that should always be symlinked if possible and do
 # not need a placeholder directory.
 (cd home && find . -maxdepth 4 -type d -exec mkdir -p "$HOME/{}" \;)
