@@ -9,3 +9,7 @@ trim_trailing_whitespace = true
 
 [{*.bash,*.sh,*.zsh,.zshrc,.bashrc,local/bin/*}]
 indent_size = 4
+
+[home/.gitconfig]
+indent_style = tab
+indent_size = 4
