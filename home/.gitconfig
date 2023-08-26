@@ -35,3 +35,6 @@
 	fa = fetch --all
 	pl = pull
 	ps = push
+
+[include]
+	path = ~/.gitconfig_untracked
