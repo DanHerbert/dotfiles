@@ -12,6 +12,14 @@ if ! [ -d "$HOME/.local/bin" ]; then
     mkdir -p "$HOME/.local/bin"
 fi
 
+if ! [ -d "$HOME/.local/lib" ]; then
+    mkdir -p "$HOME/.local/lib"
+fi
+
+if ! [ -d "$HOME/.local/lib/bc.d" ]; then
+    mkdir -p "$HOME/.local/lib/bc.d"
+fi
+
 if ! command -v stow 2> /dev/null; then
     echo 'GNU stow is not installed. All package managers call this "stow".'
     exit 1
