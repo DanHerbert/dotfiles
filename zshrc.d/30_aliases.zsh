@@ -1,10 +1,17 @@
 #!/usr/bin/zsh
 
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias zgrep='egrep --color=auto'
+
 # Environment variable LS_COLORS must also exist for this to work.
 alias ls='ls --color=auto -p'
 alias lsc='ls --color=auto --group-directories-first -Apv'
 # Force diff to use color by default.
 alias diff='diff --color'
+
+alias dateutc='date -u +%Y-%m-%dT%H:%M:%S%z'
 
 alias code="$HOME/.local/bin/codium"
 
