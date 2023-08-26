@@ -9,7 +9,17 @@ PROJECT_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 set -euv
 
 cd "$PROJECT_ROOT"
-if [ "$(git branch --show-current)" != 'main' ]; then
+current_branch="$(git branch --show-current)"
+git_failed=$?
+if [ $git_failed ]; then
+    echo "Bad git ownership detected. Doing nothing."
+    # Git project user
+    stat -c '%U' "$PROJECT_ROOT"
+    echo "Script user: $USER"
+    git config --show-origin --get-all safe.directory
+    exit 1
+fi
+if [ "$current_branch" != 'main' ]; then
     echo 'On a non-default branch. Doing nothing.'
     exit
 fi
