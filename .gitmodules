@@ -1,0 +1,6 @@
+[submodule "vim-nginx"]
+	path = home/.vim/pack/plugins/start/nginx
+	url = https://github.com/chr4/nginx.vim.git
+[submodule "vim-stylus"]
+	path = home/.vim/pack/plugins/start/stylus
+	url = https://github.com/wavded/vim-stylus.git
