@@ -4,3 +4,6 @@
 [submodule "vim-stylus"]
 	path = home/.vim/pack/plugins/start/stylus
 	url = https://github.com/wavded/vim-stylus.git
+[submodule "vim-editorconfig"]
+	path = home/.vim/pack/plugins/start/editorconfig
+	url = https://github.com/editorconfig/editorconfig-vim
