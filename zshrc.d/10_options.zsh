@@ -1,9 +1,11 @@
 #!/usr/bin/zsh
 
-zstyle :compinstall filename "$HOME/.zshrc"
-
 autoload -Uz compinit
 compinit -u
+
+zstyle :compinstall filename "$HOME/.zshrc"
+# Case insensitive completions
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
 setopt extendedglob
 setopt histexpiredupsfirst
