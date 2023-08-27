@@ -1,5 +1,10 @@
 #!/usr/bin/zsh
 
+# Don't do anything if not running an interactive shell.
+if [[ ! -o interactive ]]; then
+    exit
+fi
+
 zshrc_file="$(print -P %N)"
 dotfiles_root="$(realpath "${zshrc_file:P:h}/..")"
 
