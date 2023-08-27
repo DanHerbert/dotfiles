@@ -26,7 +26,8 @@
         echo 'On a non-default branch. Doing nothing.'
         exit
     fi
-    GIT_SSH_COMMAND="ssh -o BatchMode=yes" git pull --force --autostash
+    GIT_SSH_COMMAND="ssh -o BatchMode=yes" git pull --force --autostash --recurse-submodules
+
     # A git hook will run any needed changes post-checkout so no other actions
     # are needed here. See /git-hooks/post-checkout for full behavior.
 }
