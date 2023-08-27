@@ -1,3 +1,9 @@
 #!/bin/sh
+is_branch_checkout=$1
+
+# Only run stow after branch checkouts, not file checkouts.
+if [ "$is_branch_checkout" -ne 1 ]; then
+    exit
+fi
 
 "$(git rev-parse --show-toplevel)/stow.sh"
