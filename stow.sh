@@ -13,16 +13,18 @@ fi
 # since this same situation also means the current user would always be root.
 PROJECT_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 P_USER=$(stat -c "%U" "$PROJECT_ROOT")
-P_HOME=$(bash -c "echo ~$P_USER")
+# Stow internally expects a HOME env var.
+HOME="$(bash -c "echo ~$P_USER")"
+export HOME
 
 # vim plugins are the 1 thing that should always be symlinked if possible and do
 # not need a placeholder directory.
-(cd home && find . -maxdepth 4 -type d -exec mkdir -p "$P_HOME/{}" \;)
-(cd local && find . -maxdepth 4 -type d -exec mkdir -p "$P_HOME/.local/{}" \;)
-(cd config && find . -maxdepth 4 -type d -exec mkdir -p "$P_HOME/.config/{}" \;)
+(cd home && find . -maxdepth 4 -type d -exec mkdir -p "$HOME/{}" \;)
+(cd local && find . -maxdepth 4 -type d -exec mkdir -p "$HOME/.local/{}" \;)
+(cd config && find . -maxdepth 4 -type d -exec mkdir -p "$HOME/.config/{}" \;)
 echo 'Placeholder directories for stow targets have been created, if needed.'
 
 set -x
-stow --target="$P_HOME/.config" config
-stow --target="$P_HOME/.local" local
-stow --target="$P_HOME" home
+stow --target="$HOME/.config" config
+stow --target="$HOME/.local" local
+stow --target="$HOME" home
