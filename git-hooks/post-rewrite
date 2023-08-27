@@ -1,0 +1,8 @@
+#!/bin/sh
+
+invoked_by=$1
+
+# post-rewrite can by invoked by ammend or rebase.
+if [ "$invoked_by" = "rebase" ]; then
+    "$(git rev-parse --show-toplevel)/stow.sh"
+fi
