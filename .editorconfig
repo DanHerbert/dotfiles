@@ -7,7 +7,10 @@ indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-[{*.bash,*.sh,*.zsh,.zshrc,.bashrc,local/bin/*,.vimrc,*.vim}]
+[{*.bash,*.sh,*.zsh,.zshrc,.bashrc,local/bin/*}]
+indent_size = 4
+
+[{.vimrc,*.vim}]
 indent_size = 4
 
 [home/.gitconfig]
