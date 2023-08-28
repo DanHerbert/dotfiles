@@ -4,7 +4,12 @@ export HISTFILE=$HOME/.histfile
 export HISTSIZE=10000
 export SAVEHIST=10000
 export EDITOR='/usr/bin/vim'
-export VISUAL="$HOME/.local/bin/codium"
+
+if [[ ! -z ${DISPLAY+x} ]] && [[ -x "/opt/vscodium-bin/bin/codium" ]]; then
+    export VISUAL="$HOME/.local/bin/codium"
+else
+    export VISUAL="/usr/bin/vim"
+fi
 export TERM='xterm-256color'
 # Generated using https://geoff.greer.fm/lscolors/
 export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
