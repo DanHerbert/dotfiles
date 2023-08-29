@@ -22,3 +22,15 @@ if [[ -d "$HOME/.local/lib/bc.d" ]]; then
     done
     export BC_ENV_ARGS
 fi
+
+# Create LC_COLORTERM if it doesn't exist, so it is sent over SSH sessions.
+if [[ -n $COLORTERM && -z $LC_COLORTERM ]]; then
+    LC_COLORTERM="$COLORTERM"
+    export LC_COLORTERM
+fi
+
+# Read LC_COLORTERM and use it to populate COLORTERM if the var is missing.
+if [[ -z $COLORTERM && -n $LC_COLORTERM ]]; then
+    COLORTERM="$LC_COLORTERM"
+    export COLORTERM
+fi
