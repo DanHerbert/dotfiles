@@ -26,9 +26,12 @@
         echo 'On a non-default branch. Doing nothing.'
         exit
     fi
+    OWNER=$(stat -c "%U" "$PROJECT_ROOT")
+    GROUP=$(stat -c "%G" "$PROJECT_ROOT")
+    # A git hook runs actual updates based on changes from this command.
     GIT_SSH_COMMAND="ssh -o BatchMode=yes" git pull --force --autostash --recurse-submodules
 
-    # A git hook will run any needed changes post-checkout so no other actions
-    # are needed here. See /git-hooks/post-checkout for full behavior.
+    # When this update happens through systemd (root), ownership can get wonky.
+    chown -R "$OWNER":"$GROUP" "$PROJECT_ROOT"
 }
 exit
