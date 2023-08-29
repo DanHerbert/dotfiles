@@ -12,6 +12,6 @@ if [[ -d "$HOME/.npm-packages/bin" ]]; then
     export NODE_PATH="$HOME/.npm-packages/bin"
 fi
 
-if command -v go 2>&1 >/dev/null && [[ -d "$HOME/golang/bin" ]]; then
+if command -v go > /dev/null 2>&1 && [[ -d "$HOME/golang/bin" ]]; then
     export GOPATH="$HOME/.golang"
 fi

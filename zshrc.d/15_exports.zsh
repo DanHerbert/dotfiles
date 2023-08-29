@@ -5,7 +5,7 @@ export HISTSIZE=10000
 export SAVEHIST=10000
 export EDITOR='/usr/bin/vim'
 
-if [[ ! -z ${DISPLAY+x} ]] && [[ -x "/opt/vscodium-bin/bin/codium" ]]; then
+if [[ -n ${DISPLAY+x} ]] && [[ -x "/opt/vscodium-bin/bin/codium" ]]; then
     export VISUAL="$HOME/.local/bin/codium"
 else
     export VISUAL="/usr/bin/vim"
