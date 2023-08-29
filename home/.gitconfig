@@ -8,6 +8,9 @@
 [init]
 	defaultBranch = main
 
+[diff]
+	colorMoved = zebra
+
 [color "status"]
 	removed = 1 # Red
 	added = 2 # Green
@@ -20,6 +23,10 @@
 [color "diff"]
 	old = 1 # Red
 	new = 2 # Green
+	oldMoved = 88 # Deep-ish red
+	newMoved = 34 # Different green
+	oldMovedAlternative = 124 # Less deep-ish red
+	newMovedAlternative = 76 # Slightly brigher green
 	meta = 4 # Blue
 	frag = 5 # Purple
 	context = 8 # Gray
