@@ -45,6 +45,8 @@ highlight CursorColumn ctermbg=235 guibg=#373737
 highlight CursorLine cterm=NONE ctermbg=235 guibg=#373737
 highlight LineNr ctermfg=94 guifg=#7d6426
 
+autocmd FileType gitcommit setlocal colorcolumn=72
+
 set listchars=tab:␉-,trail:·,nbsp:⎵,space:·
 set list
 
