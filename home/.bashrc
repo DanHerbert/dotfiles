@@ -17,7 +17,7 @@ fi
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 export HISTCONTROL=ignorespace:ignoredups:erasedups
 export EDITOR='/usr/bin/vim'
-if [ -n "${DISPLAY+x}" ] && [ -x "/opt/vscodium-bin/bin/codium" ]; then
+if [ -n "${DISPLAY+x}" ] && [ -x "$HOME/.local/bin/codium" ]; then
     export VISUAL="$HOME/.local/bin/codium"
 else
     export VISUAL="/usr/bin/vim"
@@ -68,7 +68,6 @@ is_dir_hg() {
   while [ "$cwd" ] && [ ! -d "$cwd/.hg" ]; do
     cwd="${cwd%/*}"
   done
-
   echo "$cwd"
 }
 
@@ -91,9 +90,9 @@ else
 fi
 
 HOST_STYLE=$DIM$RED
-PWD_STYLE=$DIM$GREEN
+CWD_STYLE=$DIM$GREEN
 
 # Documentation for Bash escape characters can be found here:
 # https://www.gnu.org/software/bash/manual/html_node/Controlling-the-Prompt.html
-export PS1="$USER_STYLE\\u$RESET$DIM@$RESET$HOST_STYLE\\h$RESET $PWD_STYLE\\w$RESET \$(__scm_dir_marker__)\\n$YELLOW\\\$$RESET "
+export PS1="$USER_STYLE\\u$RESET$DIM@$RESET$HOST_STYLE\\h$RESET $CWD_STYLE\\w$RESET \$(__scm_dir_marker__)\\n$YELLOW\\\$$RESET "
 export PS2="$YELLOW>$RESET "
