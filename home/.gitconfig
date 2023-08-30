@@ -11,6 +11,9 @@
 [diff]
 	colorMoved = zebra
 
+[advice]
+	detachedHead = false
+
 [color "status"]
 	removed = 1 # Red
 	added = 2 # Green
