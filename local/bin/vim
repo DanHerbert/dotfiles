@@ -1,0 +1,19 @@
+#!/bin/bash
+# Checks if the user has permissions to write to the file before opening it and
+# stops if the file isn't writable.
+
+# Only do checks if vim is called with a single file param. This covers 99.99%
+# of my use cases.
+if [[ "$#" -eq 1 ]]; then
+  filepath="$1"
+
+  YELLOW=$(tput setaf 3)
+  RESET=$(tput sgr0)
+
+  if [[ -e "$filepath" && ! -w "$filepath" ]]; then
+    echo "File is not writable. Did you mean ${YELLOW}sudo vim ${filepath}${RESET}?"
+    exit 1
+  fi
+fi
+# Passthrough all args.
+/usr/bin/vim "$@"
