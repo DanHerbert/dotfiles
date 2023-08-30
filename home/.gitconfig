@@ -19,7 +19,7 @@
 	added = 2 # Green
 	changed = 3 # Yellow
 	branch = 4 # Blue
-	untracked = 8 # Gray
+	untracked = 249 # Gray
 	nobranch = 196 # Very bright red
 	unmerged = 208 # Very bright orange
 
@@ -32,7 +32,7 @@
 	newMovedAlternative = 76 # Slightly brigher green
 	meta = 4 # Blue
 	frag = 5 # Purple
-	context = 8 # Gray
+	context = 247 # Gray
 
 [alias]
 	a = add
