@@ -13,6 +13,8 @@ alias diff='diff --color'
 
 alias dateutc='date -u +%Y-%m-%dT%H:%M:%S%z'
 
+alias vless="$VIMRUNTIME/macros/less.sh"
+
 alias code="$HOME/.local/bin/codium"
 
 alias py3='python3'
