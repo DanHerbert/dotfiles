@@ -25,7 +25,7 @@ if [[ $EUID == 0 ]]; then
     USER_STYLE='%{%B%F{255}%K{196}%}' # Bright red
     # Note the extra # inserted at the end to make it more "annoying"
     ACCESS_LEVEL_STYLE='%{%B%F{200}%}%#' # Hot pink
-    DIRECTORY_STYLE='%{%F{54}%}%' # Muted purple
+    DIRECTORY_STYLE='%{%F{54}%}' # Muted purple
     if [[ $COLORTERM =~ ^(truecolor|24bit)$ ]]; then
         DIRECTORY_STYLE='%{%F{#443f46}%}' # Desaturated purple
     fi
