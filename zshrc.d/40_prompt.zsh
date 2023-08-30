@@ -6,39 +6,72 @@
 # glance. See https://sources.debian.org/src/bash/4.3-11/debian/skel.bashrc/#L43
 
 
-ACCESS_LEVEL_STYLE='%{%F{226}%}' # Bright yellow
-USER_STYLE='%{%F{66}%}' # Muted cyan
-MACHINE_STYLE='%{%F{009}%}' # Muted light red
-DIRECTORY_STYLE='%{%F{65}%}' # Muted green
-VSC_STYLE='%{%F{94}%}' # Muted orange
-
-if [[ $COLORTERM =~ ^(truecolor|24bit)$ ]]; then
-    USER_STYLE='%{%F{#466767}%}' # Desaturated cyan
-    MACHINE_STYLE='%{%F{#886763}%}' # Desaturated red
-    DIRECTORY_STYLE='%{%F{#505544}%}' # Desaturated green
-    VSC_STYLE='%{%F{#6d5840}%}' # Desaturated orange
-fi
-
-# root user styles. Intentionally meant to call attention to remind me to avoid
-# lingering in this state for too long.
-if [[ $EUID == 0 ]]; then
-    USER_STYLE='%{%B%F{255}%K{196}%}' # Bright red
-    # Note the extra # inserted at the end to make it more "annoying"
-    ACCESS_LEVEL_STYLE='%{%B%F{200}%}%#' # Hot pink
-    DIRECTORY_STYLE='%{%F{54}%}' # Muted purple
-    if [[ $COLORTERM =~ ^(truecolor|24bit)$ ]]; then
-        DIRECTORY_STYLE='%{%F{#443f46}%}' # Desaturated purple
-    fi
-fi
-
 autoload -Uz vcs_info
 precmd_vcs_info() { vcs_info }
-precmd_prompt() {
-    psvar[1]=$'\%n'
+compute_needs_newline() {
+    # zsh prompt expansions treat "empty" as false and all other values as true.
+    psvar[1]=''
+    cwd=$(cd "$PWD" && dirs -p | head -1)
+    cwd_length=${#cwd}
+    vcs_length=${#vcs_info_msg_0_}
+    sys_length="${#__prompt_system_parts}"
+    if [[ $(( cwd_length + vcs_length + sys_length )) -ge 32 ]]; then
+        psvar[1]=true
+    fi
 }
-precmd_functions+=( precmd_prompt precmd_vcs_info )
+precmd_functions+=( precmd_vcs_info compute_needs_newline )
 
-PS1=$USER_STYLE'%n%{%b%f%k%}%{%F{60}%}@%{%f%}'$MACHINE_STYLE'%m%{%f%} '"$DIRECTORY_STYLE"'%~%{%f%} '"$VSC_STYLE"'${vcs_info_msg_0_}'"%{%f%}"$'\n'"$ACCESS_LEVEL_STYLE"'%#%{%b%f%} '
-PS2="$ACCOUNT_TYPE_STYLE"'>%{%f%} '
+compute_initial_prompt() {
+    local access_style='%{%F{226}%}' # Bright yellow
+    local user_style='%{%F{66}%}' # Muted cyan
+    local host_style='%{%F{9}%}' # Muted light red
+    local cwd_style='%{%F{65}%}' # Muted green
+    local vcs_style='%{%F{94}%}' # Muted orange
 
-zstyle ':vcs_info:git:*' formats '(%b)'
+    if [[ $COLORTERM =~ ^(truecolor|24bit)$ ]]; then
+        user_style='%{%F{#466767}%}' # Desaturated cyan
+        host_style='%{%F{#886763}%}' # Desaturated red
+        cwd_style='%{%F{#505544}%}' # Desaturated green
+        vcs_style='%{%F{#6d5840}%}' # Desaturated orange
+    fi
+
+    # root user styles. Intentionally meant to call attention to remind me to avoid
+    # lingering in this state for too long.
+    if [[ $EUID == 0 ]]; then
+        user_style='%{%B%F{255}%K{196}%}' # Bright red
+        # Note the extra # inserted at the end to make it more "annoying"
+        access_style='%{%B%F{200}%}%#' # Hot pink
+        cwd_style='%{%F{54}%}' # Muted purple
+        if [[ $COLORTERM =~ ^(truecolor|24bit)$ ]]; then
+            cwd_style='%{%F{#443f46}%}' # Desaturated purple
+        fi
+    fi
+
+    local system_parts
+    if [[ $(id -u) -ne 1000 ]]; then
+        system_parts=$user_style'%n%{%b%f%k%}'
+    fi
+    if [[ -n $SSH_CLIENT ]]; then
+        if [[ -n $system_parts ]]; then
+            system_parts+='%{%F{60}%}@%{%f%}'
+        fi
+        system_parts+=$host_style'%m%{%f%}'
+    fi
+    if [[ -n $system_parts ]]; then
+        system_parts+=' '
+    fi
+
+    PS1="$system_parts$cwd_style"'%~%{%f%} '"$vcs_style"'${vcs_info_msg_0_}%{%f%}'%1(V.$'\n'.)"$access_style"'%#%{%b%f%} '
+    PS2="$access_style"'>%{%f%} '
+    __prompt_system_parts="$system_parts"
+
+    export PS1
+    export PS2
+    export __prompt_system_parts
+}
+compute_initial_prompt
+unset -f compute_initial_prompt
+
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:git:*' check-for-changes true
+zstyle ':vcs_info:git:*' formats '⎇ %b%a %u%c%m'
