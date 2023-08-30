@@ -5,6 +5,8 @@
 # the prompt data, but still has a touch of color to make it readable at a
 # glance. See https://sources.debian.org/src/bash/4.3-11/debian/skel.bashrc/#L43
 
+# For documentation of zsh prompt expansion sequences, see:
+# https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
 
 autoload -Uz vcs_info
 precmd_vcs_info() { vcs_info }

@@ -31,3 +31,7 @@ if [[ -d "$HOME/.local/lib/bc.d" ]]; then
     unset file
     export BC_ENV_ARGS
 fi
+
+ZSH_COMMAND_TIME_COLOR="250"  # Gray
+ZSH_COMMAND_TIME_EXCLUDE=(vim journalctl "tail -f" "dmesg -w" "dmesg -W")
+ZSH_COMMAND_TIME_MSG="[%%*] Runtime: %s"
