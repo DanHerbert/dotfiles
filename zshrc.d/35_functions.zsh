@@ -24,4 +24,4 @@ wanips() {
     wanip
     wanip6
 }
-export wanip6
+export wanips
