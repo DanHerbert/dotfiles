@@ -22,9 +22,9 @@ compute_needs_newline() {
 precmd_functions+=( precmd_vcs_info compute_needs_newline )
 
 compute_initial_prompt() {
-    local access_style='%{%F{226}%}' # Bright yellow
+    local access_style='%{%F{11}%}' # Bright yellow
     local user_style='%{%F{66}%}' # Muted cyan
-    local host_style='%{%F{9}%}' # Muted light red
+    local host_style='%{%F{95}%}' # Muted light red
     local cwd_style='%{%F{65}%}' # Muted green
     local vcs_style='%{%F{94}%}' # Muted orange
 
