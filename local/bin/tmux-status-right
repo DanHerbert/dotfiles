@@ -1,33 +1,27 @@
 #!/bin/bash
 
-localDateTime=$(TZ=US/Pacific date +"%Y-%m-%d T %H:%M")
-machineName=$(hostname)
+local_datetime=$(TZ=US/Pacific date +"%Y-%m-%d T %H:%M")
+utc_time=$(date +'%H:%M' --utc)
+status_right=$(hostname)
 
-hasNormalStatusBarColor=true
+local_date=$(TZ=US/Pacific date +"%Y-%m-%d")
+utc_date=$(date +"%Y-%m-%d" --utc)
 
-localDateTime=$(TZ=US/Pacific date +"%H:%M %Y-%m-%d")
-utcDateTime=$(date +'%H:%M' --utc)
-
-localDateOnly=$(TZ=US/Pacific date +"%Y-%m-%d")
-utcDateOnly=$(date +"%Y-%m-%d" --utc)
-
-if [[ $utcDateOnly == "$localDateOnly" ]]; then
-    utcDatedDisplay="/ #[fg=colour250,bold]${utcDateTime}Z"
+if [[ $utc_date == "$local_date" ]]; then
+    utc_datetime="/ #[fg=colour250,bold]${utc_time}Z"
 else
-    monthDay=$(date +'%m-%d' --utc)
-    utcDatedDisplay="/ #[fg=colour250,bold]${utcDateTime}Z $monthDay"
+    utc_month_day=$(date +'%m-%d' --utc)
+    utc_datetime="/ #[fg=colour250,bold]${utc_time}Z $utc_month_day"
 fi
+status_right="║ $local_datetime $utc_datetime"
 
-if [[ -f /var/run/reboot-required ]]; then
+if [[ -e /var/run/reboot-required ]]; then
     tmux set-option -g status-style bg=colour160,fg=colour15
-    hasNormalStatusBarColor=false
-    machineName='REBOOT │ '"$machineName"
-fi
-
-machineName=$(hostname)
-
-if $hasNormalStatusBarColor; then
+    status_right="REBOOT $status_right"
+else
     tmux set-option -g status-style bg=colour237,fg=colour245
 fi
 
-echo "$machineName ║ $localDateTime $utcDatedDisplay"
+status_len=${#status_right}
+tmux set-option -g status-right-length "$status_len"
+echo "$status_right"
