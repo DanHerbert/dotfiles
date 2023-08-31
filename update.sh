@@ -37,7 +37,7 @@
 
     new_version=$(git rev-parse HEAD)
     new_submodule_version=$(git submodule status --recursive | sha1sum | awk '{ print $1 }')
-    if [ "$new_version" -ne "$old_version" ] || [ "$old_submodule_version" -ne "$new_submodule_version" ]; then
+    if [ "$new_version" != "$old_version" ] || [ "$old_submodule_version" != "$new_submodule_version" ]; then
         "$PROJECT_ROOT/stow.sh"
     fi
 }
