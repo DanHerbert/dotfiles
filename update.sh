@@ -28,10 +28,17 @@
     fi
     OWNER=$(stat -c "%U" "$PROJECT_ROOT")
     GROUP=$(stat -c "%G" "$PROJECT_ROOT")
-    # A git hook runs actual updates based on changes from this command.
+    old_version=$(git rev-parse HEAD)
+    old_submodule_version=$(git submodule status --recursive | sha1sum | awk '{ print $1 }')
     GIT_SSH_COMMAND="ssh -o BatchMode=yes" git pull --force --autostash --recurse-submodules
-
+    GIT_SSH_COMMAND="ssh -o BatchMode=yes" git submodule update --init --recursive
     # When this update happens through systemd (root), ownership can get wonky.
     chown -R "$OWNER":"$GROUP" "$PROJECT_ROOT"
+
+    new_version=$(git rev-parse HEAD)
+    new_submodule_version=$(git submodule status --recursive | sha1sum | awk '{ print $1 }')
+    if [ "$new_version" -ne "$old_version" ] || [ "$old_submodule_version" -ne "$new_submodule_version" ]; then
+        "$PROJECT_ROOT/stow.sh"
+    fi
 }
 exit
