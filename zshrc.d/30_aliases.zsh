@@ -6,8 +6,8 @@ alias egrep='egrep --color=auto'
 alias zgrep='egrep --color=auto'
 
 # Environment variable LS_COLORS must also exist for this to work.
-alias ls='ls --color=auto -p'
-alias lsc='ls --color=auto --group-directories-first -Apv'
+alias ls='ls --color=auto --group-directories-first -pv'
+alias lsc='ls --color=auto --group-directories-first -pvA'
 # Force diff to use color by default.
 alias diff='diff --color'
 
@@ -21,6 +21,8 @@ alias py3='python3'
 
 # zsh seems to automatically map completions of this to git, but bash does not.
 alias g='/usr/bin/git'
+
+alias sudo='nocorrect sudo '
 
 # Aliases I've used in the past, but keep a reminder message for since I still
 # use them out of habit sometimes.
