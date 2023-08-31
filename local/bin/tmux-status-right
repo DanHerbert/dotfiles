@@ -2,7 +2,6 @@
 
 local_datetime=$(TZ=US/Pacific date +"%Y-%m-%d T %H:%M")
 utc_time=$(date +'%H:%M' --utc)
-status_right=$(hostname)
 
 local_date=$(TZ=US/Pacific date +"%Y-%m-%d")
 utc_date=$(date +"%Y-%m-%d" --utc)
@@ -15,11 +14,12 @@ else
 fi
 status_right="║ $local_datetime $utc_datetime"
 
-if [[ -e /var/run/reboot-required ]]; then
+if [[ ! -e /var/run/reboot-required ]]; then
+    status_right="$(hostname) $status_right"
+    tmux set-option -g status-style bg=colour237,fg=colour245
+else
     tmux set-option -g status-style bg=colour160,fg=colour15
     status_right="REBOOT $status_right"
-else
-    tmux set-option -g status-style bg=colour237,fg=colour245
 fi
 
 status_len=${#status_right}
