@@ -17,7 +17,8 @@ compute_needs_newline() {
     cwd_length=${#cwd}
     vcs_length=${#vcs_info_msg_0_}
     sys_length="${#__prompt_system_parts}"
-    if [[ $(( cwd_length + vcs_length + sys_length )) -ge 32 ]]; then
+    venv_length=${#VIRTUAL_ENV_PROMPT}
+    if [[ $(( venv_length + cwd_length + vcs_length + sys_length )) -ge 32 ]]; then
         psvar[1]=true
     fi
 }
