@@ -25,3 +25,13 @@ wanips() {
     wanip6
 }
 export wanips
+
+# Count the number of cores, minus efficiency cores iff on an Alder Lake system.
+# Prior generations of Intel CPUs will return the total core count.
+perf_cores() {
+    lscpu --all --extended | tail -n +2 | awk '{ print $4 }' | uniq -c | awk '{ print $1 }' | uniq -c | head -n1 | awk '{ print $1 }'
+}
+
+totalcores() {
+    grep -E '^cpu\scores' /proc/cpuinfo | uniq |  awk '{print $4}'
+}
