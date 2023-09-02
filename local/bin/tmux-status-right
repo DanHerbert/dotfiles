@@ -1,9 +1,42 @@
 #!/bin/bash
+TIME_ZONE='US/Pacific'
+disk_usage=
+adjusted_load_avg=
+ram_usage=
+WARNING_ORANGE='colour166'
+WARNING_RED='colour160'
+NORMAL_GREY='colour237'
+TEXT_GRAY='colour245'
+TEXT_WHITE='colour15'
 
-local_datetime=$(TZ=US/Pacific date +"%Y-%m-%d T %H:%M")
+is_cpu_load_high() {
+    local performance_cores
+    local load_avg
+    # Get number of cores on a system, exluding efficiency cores iff on an Alder Lake system
+    performance_cores=$(lscpu --all --extended | tail -n +2 | awk '{ print $4 }' | uniq -c | awk '{ print $1 }' | uniq -c | head -n1 | awk '{ print $1 }')
+    load_avg=$(awk '{ print $1 }' /proc/loadavg) # 1 minute load average
+    adjusted_load_avg=$(echo "( ${load_avg} / ${performance_cores} )" | bc -l | xargs printf "%.2f")
+    test "$(echo "$adjusted_load_avg > 0.7" | bc -l)" = 1
+}
+
+is_disk_filling() {
+    disk_usage=$(df -hl --output=pcent / | tail -n +2 | sed 's/[^0-9]*//g')
+    test "$disk_usage" -ge 60
+}
+
+is_ram_use_high() {
+    local used
+    local total
+    used=$(free -m |   awk '{if (NR==2) {{print $3}}}')
+    total=$(free -m |   awk '{if (NR==2) {{print $2}}}')
+    ram_usage=$( (bc -l <<< "scale=3; fract=($used / $total); scale=0; fract * 100") | xargs printf "%.0f")
+    test "$ram_usage" -gt 70
+}
+
+local_datetime=$(TZ=$TIME_ZONE date +"%Y-%m-%d T %H:%M")
 utc_time=$(date +'%H:%M' --utc)
 
-local_date=$(TZ=US/Pacific date +"%Y-%m-%d")
+local_date=$(TZ=$TIME_ZONE date +"%Y-%m-%d")
 utc_date=$(date +"%Y-%m-%d" --utc)
 
 if [[ $utc_date == "$local_date" ]]; then
@@ -14,14 +47,30 @@ else
 fi
 status_right="║ $local_datetime $utc_datetime"
 
-if [[ ! -e /var/run/reboot-required ]]; then
-    status_right="$(hostname) $status_right"
-    tmux set-option -g status-style bg=colour237,fg=colour245
-else
-    tmux set-option -g status-style bg=colour160,fg=colour15
+status_bg=$NORMAL_GREY
+status_fg=$TEXT_GRAY
+
+if [[ -e /var/run/reboot-required ]]; then
+    status_fg=$TEXT_WHITE
+    status_bg=$WARNING_RED
     status_right="REBOOT $status_right"
+elif is_cpu_load_high; then
+    status_fg=$TEXT_WHITE
+    status_bg=$WARNING_ORANGE
+    status_right="CPU $adjusted_load_avg $status_right"
+elif is_disk_filling; then
+    status_fg=$TEXT_WHITE
+    status_bg=$WARNING_ORANGE
+    status_right="DISK $disk_usage% $status_right"
+elif is_ram_use_high; then
+    status_fg=$TEXT_WHITE
+    status_bg=$WARNING_ORANGE
+    status_right="RAM $ram_usage% $status_right"
+else
+    status_right="$(hostname) $status_right"
 fi
 
 status_len=${#status_right}
 tmux set-option -g status-right-length "$status_len"
+tmux set-option -g status-style bg=$status_bg,fg=$status_fg
 echo "$status_right"
