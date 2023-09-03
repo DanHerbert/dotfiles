@@ -5,10 +5,9 @@
 # intentionally small & standalone with no references to any other files.
 
 # If not running interactively, don't do anything.
-case $- in
-    *i*) ;;
-      *) return;;
-esac
+[[ $- != *i* ]] && return
+
+[[ $DISPLAY ]] && shopt -s checkwinsize
 
 if command -v shopt > /dev/null 2>&1; then
     shopt -s histappend
@@ -17,10 +16,9 @@ fi
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 export HISTCONTROL=ignorespace:ignoredups:erasedups
 export EDITOR='/usr/bin/vim'
+export VISUAL='/usr/bin/vim'
 if [ -n "${DISPLAY+x}" ] && [ -x "$HOME/.local/bin/codium" ]; then
     export VISUAL="$HOME/.local/bin/codium"
-else
-    export VISUAL="/usr/bin/vim"
 fi
 
 PATH="$HOME/.local/bin:$PATH"
@@ -28,10 +26,14 @@ PATH="$HOME/.local/bin:$PATH"
 # Generated using https://geoff.greer.fm/lscolors/
 export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
 
-alias ls='ls --color=auto -p'
+if [[ -r /usr/share/bash-completion/bash_completion ]]; then
+  source /usr/share/bash-completion/bash_completion
+fi
+
+alias ls='ls --color=auto -pv'
 
 if [ -x "$HOME/.local/bin/codium" ]; then
-    alias code='/usr/bin/codium'
+    alias code='$HOME/.local/bin/codium'
 else
     alias code='/usr/bin/codium'
 fi
@@ -63,7 +65,7 @@ BOLD='\[\e[1m\]'
 DIM='\[\e[2m\]'
 RESET='\[\e[0m\]'
 
-is_dir_hg() {
+__is_dir_hg() {
   cwd="$(pwd -P)"
   while [ "$cwd" ] && [ ! -d "$cwd/.hg" ]; do
     cwd="${cwd%/*}"
@@ -77,7 +79,7 @@ __scm_dir_marker__() {
     if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
         current_rev=$(git symbolic-ref -q --short HEAD 2> /dev/null || git describe --tags --exact-match 2> /dev/null || git rev-parse --short HEAD)
         printf '%s⎇ %s%s' "$SCM_STYLE" "$current_rev" "$SCM_RESET"
-    elif is_dir_hg > /dev/null 2>&1; then
+    elif __is_dir_hg > /dev/null 2>&1; then
         printf '%s☿%s' "$SCM_STYLE" "$SCM_RESET"
     fi
 }
