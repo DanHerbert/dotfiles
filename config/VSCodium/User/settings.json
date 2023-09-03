@@ -30,6 +30,9 @@
     "[javascript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
     "[css]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
@@ -42,6 +45,7 @@
     },
     "files.associations": {
         "*.json5": "jsonc",
-        "**/git/config": "properties"
+        "**/git/config": "properties",
+        "**/cheat/cheatsheets/personal/**": "markdown"
     }
 }
