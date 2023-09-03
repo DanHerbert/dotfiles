@@ -19,9 +19,9 @@ export HOME
 
 # vim plugins are the 1 thing that should always be symlinked if possible and do
 # not need a placeholder directory. maxdepth is chosen to exclude vim plugins.
-(cd home && find . -maxdepth 4 -type d -exec mkdir -p "$HOME/{}" \;)
-(cd local && find . -maxdepth 4 -type d -exec mkdir -p "$HOME/.local/{}" \;)
-(cd config && find . -maxdepth 4 -type d -exec mkdir -p "$HOME/.config/{}" \;)
+(cd home && find . -maxdepth 4 -type d -exec sudo -u "$P_USER" mkdir -p "$HOME/{}" \;)
+(cd local && find . -maxdepth 3 -type d -exec sudo -u "$P_USER" mkdir -p "$HOME/.local/{}" \;)
+(cd config && find . -maxdepth 3 -type d -exec sudo -u "$P_USER" mkdir -p "$HOME/.config/{}" \;)
 echo 'Placeholder directories for stow targets have been created, if needed.'
 
 set -x
