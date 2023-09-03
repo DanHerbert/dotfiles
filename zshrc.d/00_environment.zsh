@@ -1,4 +1,19 @@
 #!/usr/bin/zsh
+# Most environment variables should be placed in config/environment.d/
+# This file is only for:
+# vars that require some computation to evaluate
+# vars that are specific to interactive shells
+
+# This env var check is used as a proxy to figure out if the current environment
+# has not loaded ~/.config/environment.d/ which my dotfiles depend on.
+if [[ -z $XDG_CONFIG_HOME ]]; then
+    for conf in "$HOME"/.config/environment.d/*.conf; do
+        set -a; source <(grep -vE '^#' "$conf"); set +a;
+        # for var in $(grep -vE '^#' "$conf"); do
+        #     export $var
+        # done
+    done
+fi
 
 if [[ -n ${DISPLAY+x} ]] && [[ -x "/opt/vscodium-bin/bin/codium" ]]; then
     export VISUAL="$HOME/.local/bin/codium"
