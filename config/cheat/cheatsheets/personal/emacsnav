@@ -1,0 +1,11 @@
+# Navigation ( backward / forward ) C=ctrl, M=alt
+
+  Character-wise                                  C-b , C-f
+  Word-wise                                       M-b , M-f
+  Line beginning / end                            C-a , C-e
+  Delete word-wise                                C-w , M-d
+  Delete line beginning / end                     C-u , C-k
+  Reverse search history                          C-r
+  Advance through history                         C-p , C-n
+  Undo edit                                       C-_
+  Revert to original                              M-r
