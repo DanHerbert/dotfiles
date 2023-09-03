@@ -30,13 +30,20 @@
     GROUP=$(stat -c "%G" "$PROJECT_ROOT")
     old_version=$(git rev-parse HEAD)
     old_submodule_version=$(git submodule status --recursive | sha1sum | awk '{ print $1 }')
-    GIT_SSH_COMMAND="ssh -o BatchMode=yes" git pull --force --autostash --recurse-submodules
+    if [ "$(git status --porcelain | wc -l)" -gt 0 ]; then
+        has_stash=True
+        git stash --include-untracked
+    fi
+    GIT_SSH_COMMAND="ssh -o BatchMode=yes" git pull --force --recurse-submodules
     GIT_SSH_COMMAND="ssh -o BatchMode=yes" git submodule update --init --recursive
     # When this update happens through systemd (root), ownership can get wonky.
     chown -R "$OWNER":"$GROUP" "$PROJECT_ROOT"
 
     new_version=$(git rev-parse HEAD)
     new_submodule_version=$(git submodule status --recursive | sha1sum | awk '{ print $1 }')
+    if $has_stash; then
+        git stash pop
+    fi
     if [ "$new_version" != "$old_version" ] || [ "$old_submodule_version" != "$new_submodule_version" ]; then
         "$PROJECT_ROOT/stow.sh"
     fi
