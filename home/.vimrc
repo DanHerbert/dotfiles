@@ -27,6 +27,8 @@ syntax on
 filetype on
 filetype plugin on
 
+set viminfo+=n~/.vim/viminfo
+
 set background=dark
 "Color scheme names from $(vim --cmd 'echo $VIMRUNTIME|q')/colors/
 "  colorscheme evening

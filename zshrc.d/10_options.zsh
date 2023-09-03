@@ -1,7 +1,18 @@
 #!/usr/bin/zsh
 
-autoload -Uz compinit
-compinit -u
+[[ -d $ZSH_COMPDUMP ]] || mkdir -p $ZSH_COMPDUMP
+_comp_files=($ZSH_COMPDUMP/zcompdump(Nm-20))
+
+zstyle ':completion:*' use-cache true
+zstyle ':completion:*' cache-path $ZSH_COMPDUMP/zcompdump-${ZSH_VERSION}
+
+if (( $#_comp_files )); then
+    autoload -Uz compinit -C -d "$ZSH_COMPDUMP/zcompdump-${ZSH_VERSION}"
+else
+    autoload -Uz compinit -d "$ZSH_COMPDUMP/zcompdump-${ZSH_VERSION}"
+fi
+
+compinit -u -d "$ZSH_COMPDUMP/zcompdump-${ZSH_VERSION}"
 
 zstyle :compinstall filename "$HOME/.zshrc"
 # Case insensitive completions
