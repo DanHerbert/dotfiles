@@ -1,4 +1,4 @@
-root = false
+root = true
 
 [*]
 charset = utf-8
@@ -13,6 +13,6 @@ indent_size = 4
 [{.vimrc,*.vim}]
 indent_size = 4
 
-[home/.gitconfig]
+[config/git/*]
 indent_style = tab
 indent_size = 4

@@ -8,6 +8,7 @@
 
 [user]
 	name = Dan Herbert
+	useConfigOnly = true
 
 [init]
 	defaultBranch = main
@@ -59,4 +60,4 @@
 	ps = push
 
 [include]
-	path = ~/.gitconfig_untracked
+	path = ~/.config/git/untracked_config
