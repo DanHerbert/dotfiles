@@ -1,5 +1,10 @@
 [core]
 	editor = /usr/bin/vim
+	# Treat spaces before tabs and all kinds of trailing whitespace as an error.
+	# [default] trailing-space: looks for spaces at the end of a line
+	# [default] space-before-tab: looks for spaces before tabs at the beginning of
+	# a line
+	whitespace = space-before-tab,-indent-with-non-tab,trailing-space
 
 [user]
 	name = Dan Herbert
@@ -9,6 +14,14 @@
 
 [diff]
 	colorMoved = zebra
+
+[fetch]
+	# Remove remote branches locally when they're deleted from origin
+	prune = true
+
+[push]
+	# Automatically figure out what remote branch a local branch should get pushed to
+	default = matching
 
 [advice]
 	detachedHead = false
