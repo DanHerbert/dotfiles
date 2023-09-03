@@ -9,9 +9,6 @@
 if [[ -z $XDG_CONFIG_HOME ]]; then
     for conf in "$HOME"/.config/environment.d/*.conf; do
         set -a; source <(grep -vE '^#' "$conf"); set +a;
-        # for var in $(grep -vE '^#' "$conf"); do
-        #     export $var
-        # done
     done
 fi
 
