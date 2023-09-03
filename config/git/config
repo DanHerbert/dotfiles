@@ -49,15 +49,20 @@
 
 [alias]
 	a = add
+	au = add -u
+	aa = add -A
 	b = branch
 	d = diff
 	dc = diff --cached
 	cm = commit
 	co = checkout
+	cob = checkout -b
 	f = fetch
 	fa = fetch --all
 	pl = pull
+	pla = pull --all
 	ps = push
+	psa = push --all
 
 [include]
 	path = ~/.config/git/untracked_config

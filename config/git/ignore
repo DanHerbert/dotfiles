@@ -5,3 +5,6 @@ Thumbs.db
 npm-debug.log
 log/
 *.log
+__MACOSX
+*.old
+*~
