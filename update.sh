@@ -30,8 +30,9 @@
     GROUP=$(stat -c "%G" "$PROJECT_ROOT")
     old_version=$(git rev-parse HEAD)
     old_submodule_version=$(git submodule status --recursive | sha1sum | awk '{ print $1 }')
+    has_stash=false
     if [ "$(git status --porcelain | wc -l)" -gt 0 ]; then
-        has_stash=True
+        has_stash=true
         git stash --include-untracked
     fi
     GIT_SSH_COMMAND="ssh -o BatchMode=yes" git pull --force --recurse-submodules
