@@ -17,11 +17,13 @@ P_USER=$(stat -c "%U" "$PROJECT_ROOT")
 HOME="$(bash -c "echo ~$P_USER")"
 export HOME
 
-# vim plugins are the 1 thing that should always be symlinked if possible and do
-# not need a placeholder directory. maxdepth is chosen to exclude vim plugins.
+# Setup destination directories for everything in the repo. This will make it
+# easier to add machine-specific files without being tracked as part of this
+# dotfiles repo. vim needs extra depth to ensure that the plugins directory is a
+# real directory and not a symlink, hence the difference in home/
 (cd home && find . -maxdepth 4 -type d -exec sudo -u "$P_USER" mkdir -p "$HOME/{}" \;)
-(cd local && find . -maxdepth 3 -type d -exec sudo -u "$P_USER" mkdir -p "$HOME/.local/{}" \;)
-(cd config && find . -maxdepth 3 -type d -exec sudo -u "$P_USER" mkdir -p "$HOME/.config/{}" \;)
+(cd local && find . -maxdepth 2 -type d -exec sudo -u "$P_USER" mkdir -p "$HOME/.local/{}" \;)
+(cd config && find . -maxdepth 2 -type d -exec sudo -u "$P_USER" mkdir -p "$HOME/.config/{}" \;)
 echo 'Placeholder directories for stow targets have been created, if needed.'
 
 set -x
