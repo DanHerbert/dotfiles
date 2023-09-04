@@ -11,6 +11,8 @@ alias lsc='ls --color=auto --group-directories-first -pvA'
 # Force diff to use color by default.
 alias diff='diff --color'
 
+alias ytd='/usr/bin/yt-dlp'
+
 alias dateutc='date -u +%Y-%m-%dT%H:%M:%S%z'
 
 alias vless="$VIMRUNTIME/macros/less.sh"
