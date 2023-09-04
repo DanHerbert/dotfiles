@@ -13,6 +13,9 @@ indent_size = 4
 [{.vimrc,*.vim}]
 indent_size = 4
 
+# Modifying git configs with the git CLI enforces tabs for alignment so making
+# my editor follow the same rules is better than trying to change the git CLI
+# to follow my conventions.
 [config/git/*]
 indent_style = tab
 indent_size = 4

@@ -14,7 +14,18 @@
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
     "files.trimTrailingWhitespace": true,
+    "editor.unicodeHighlight.ambiguousCharacters": true,
+    "editor.unicodeHighlight.invisibleCharacters": true,
     "git.openRepositoryInParentFolders": "always",
+    "shellcheck.customArgs": ["-x"],
+    "files.readonlyInclude": {
+        "**/public/**": true
+    },
+    "files.associations": {
+        "*.json5": "jsonc",
+        "**/config/git/config": "properties",
+        "**/cheat/cheatsheets/personal/**": "markdown"
+    },
     "[shellscript]": {
         "editor.tabSize": 4,
         "editor.defaultFormatter": "mkhl.shfmt"
@@ -39,13 +50,12 @@
     "[markdown]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "[go]": {
+    "[properties]":  {
         "editor.insertSpaces": false,
         "editor.tabSize": 4
     },
-    "files.associations": {
-        "*.json5": "jsonc",
-        "**/git/config": "properties",
-        "**/cheat/cheatsheets/personal/**": "markdown"
+    "[go]": {
+        "editor.insertSpaces": false,
+        "editor.tabSize": 4
     }
 }
