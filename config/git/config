@@ -8,6 +8,7 @@
 
 [user]
 	name = Dan Herbert
+	signingkey = 01EAA5CE74DFD56C!
 	useConfigOnly = true
 
 [init]
