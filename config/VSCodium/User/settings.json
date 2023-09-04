@@ -1,6 +1,7 @@
 {
     "workbench.colorTheme": "Tomorrow Night Eighties",
     "redhat.telemetry.enabled": false,
+    "telemetry.telemetryLevel": "off",
     "editor.rulers": [
         80, 100, 120
     ],
