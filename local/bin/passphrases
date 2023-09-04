@@ -27,11 +27,10 @@ if [[ $BC_ENV_ARGS != *"ceil.bc"* ]]; then
     exit 1
 fi
 
-WORD_COUNT=4
+WORD_COUNT=3
 # DELIMITER_TYPE=--delimiter=-
 DELIMITER_TYPE=(--random-delimiters --valid-delimiters='23456789')
 # DELIMITER_TYPE=(--random-delimiters --valid-delimiters='23456789%&*-+$')
-EXPECTED_DELIMITER_COUNT=$((WORD_COUNT - 1))
 # CASE_TYPE=--case=lower # Or "random" for more entropy
 CASE_TYPE=--case=lower
 # Use caution when changing the max word size.
@@ -46,33 +45,44 @@ CASE_TYPE=--case=lower
 #  9chars: 7776  (100%)
 WORD_LENGTH_MAX=9
 WORD_LENGTH_MAX_AVG=6.5
+
+# Total number of passphrases to generate.
+OUTPUT_COUNT=15
+
+conf_file="$XDG_CONFIG_HOME/passphrases/options.conf"
+if [[ -e "$conf_file" ]]; then
+    set -a;
+    # shellcheck source=/home/dan/.config/passphrases/options.conf
+    source "$conf_file";
+    set +a;
+fi
+
+EXPECTED_DELIMITER_COUNT=$((WORD_COUNT - 1))
 # Avoid having passphrases filled with too many long words.
 PASSPHRASE_LENGTH=$(echo "scale = 0; ceil( ($WORD_COUNT * $WORD_LENGTH_MAX_AVG)\
-+ ($WORD_COUNT - 1) )" | bc -l)
+    + $EXPECTED_DELIMITER_COUNT )" | bc -l)
 
-COUNT=15
-
-echo "Running the following command until $COUNT passphrases are generated:"
-printf "xkcdpass --count=%s --min=3 --max=%s --numwords=%s %s %s | sponge |" \
-    $((COUNT * 3)) $WORD_LENGTH_MAX $WORD_COUNT "${DELIMITER_TYPE[@]}" \
-    $CASE_TYPE
-echo -n $'\n'"    sed --regexp-extended 's/^[^a-z]//gi; s/[^a-z]$//gi' |"$'\n'
-printf '    grep --extended-regexp "([^a-z][a-z]+){%s}"'" |\
- sed '/^.\{'%s',\}$/d' |" $EXPECTED_DELIMITER_COUNT "$PASSPHRASE_LENGTH"
-echo -n $'\n'"    grep --extended-regexp"
-printf " --invert-match --ignore-case '(.)[^a-z]?\\\1{1}'"$'\n'
+echo "Generating $OUTPUT_COUNT passphrases..."
 
 passphrases=''
 loop_count=0
-COUNT_MULTIPLIER=3
+start_time=$(date +%s%N)
+escalating_count="$OUTPUT_COUNT"
 # With the amount of extra filtering being done here, xkcdpass needs to generate
 # more passwords than the amount ultimately shown. The exact number will vary
 # due to randomness so we just keep running the command until we have enough.
-while [[ $(echo -n "$passphrases" | wc -l) -le $COUNT ]]; do
+while [[ $(echo -n "$passphrases" | wc -l) -le $OUTPUT_COUNT ]]; do
     loop_count=$((loop_count + 1))
-    new_passphrases=$(xkcdpass --count=$((COUNT * COUNT_MULTIPLIER)) --min=3 \
-        --max=$WORD_LENGTH_MAX --numwords=$WORD_COUNT \
-        "${DELIMITER_TYPE[@]}" $CASE_TYPE |
+    if [[ $((loop_count % 10)) -eq 0 && $escalating_count -lt 10000 ]]; then
+        escalating_count=$(( OUTPUT_COUNT * escalating_count ))
+    elif [[ $((loop_count % 10)) -eq 0 ]]; then
+        echo -n "Warning: Impossible options."
+        echo -n "Already ran $loop_count times (--count=$escalating_count) "
+        echo "to generate ${#passphrases} so far..."
+    fi
+    new_passphrases=$(xkcdpass --count="$escalating_count" \
+        --min=3 --max="$WORD_LENGTH_MAX" --numwords="$WORD_COUNT" \
+        "${DELIMITER_TYPE[@]}" "$CASE_TYPE" |
         # Filtering commands require the entire list to be sent together instead
         # of the stream xkcdpass outputs
         sponge |
@@ -96,6 +106,9 @@ while [[ $(echo -n "$passphrases" | wc -l) -le $COUNT ]]; do
         fi
     fi
 done
-gen_count=$((loop_count * COUNT * COUNT_MULTIPLIER))
-echo "Generated $gen_count passphrases in total to get this list:"
-echo "$passphrases" | head -n$COUNT
+end_time=$(date +%s%N)
+elapsed_millis=$(( (end_time - start_time) / 1000000 ))
+elapsed_millis_only=$(echo "scale=0;$elapsed_millis % 1000 / 10" | bc -l)
+elapsed_formatted=$((elapsed_millis / 1000))'.'$elapsed_millis_only
+echo "Ran xkcdpass $loop_count times in $elapsed_formatted seconds to get this list:"
+echo "$passphrases" | head -n"$OUTPUT_COUNT"
