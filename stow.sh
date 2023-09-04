@@ -27,6 +27,6 @@ export HOME
 echo 'Placeholder directories for stow targets have been created, if needed.'
 
 set -x
-stow --verbose=2 --target="$HOME/.config" config
-stow --verbose=2 --target="$HOME/.local" local
-stow --verbose=2 --target="$HOME" home
+sudo -u "$P_USER" stow --verbose=1 --target="$HOME/.config" config
+sudo -u "$P_USER" stow --verbose=1 --target="$HOME/.local" local
+sudo -u "$P_USER" stow --verbose=1 --target="$HOME" home
