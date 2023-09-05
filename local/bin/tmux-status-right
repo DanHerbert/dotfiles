@@ -11,12 +11,22 @@ TEXT_WHITE='colour15'
 
 is_cpu_load_high() {
     local performance_cores
-    local load_avg
-    # Get number of cores on a system, exluding efficiency cores iff on an Alder Lake system
+    local recent_load_avg
+    local long_load_avg
+    # Get number of cores on a system, excluding efficiency cores iff on an Alder Lake system
     performance_cores=$(lscpu --all --extended | tail -n +2 | awk '{ print $4 }' | uniq -c | awk '{ print $1 }' | uniq -c | head -n1 | awk '{ print $1 }')
-    load_avg=$(awk '{ print $1 }' /proc/loadavg) # 1 minute load average
-    adjusted_load_avg=$(echo "( ${load_avg} / ${performance_cores} )" | bc -l | xargs printf "%.2f")
-    test "$(echo "$adjusted_load_avg > 0.7" | bc -l)" = 1
+    recent_load_avg=$(awk '{ print $1 }' /proc/loadavg) # 1 minute load average
+    recent_load_avg=$(echo "( ${recent_load_avg} / ${performance_cores} )" | bc -l | xargs printf "%.2f")
+    long_load_avg=$(awk '{ print $3 }' /proc/loadavg) # 1 minute load average
+    long_load_avg=$(echo "( ${long_load_avg} / ${performance_cores} )" | bc -l | xargs printf "%.2f")
+    if [[ $recent_load_avg -gt $long_load_avg ]]; then
+        adjusted_load_avg=$recent_load_avg
+        test "$(echo "$recent_load_avg > 0.7" | bc -l)" = 1
+    else
+        adjusted_load_avg=$long_load_avg
+        # 50% CPU usage for 15 minutes is A LOT on my tiny systems.
+        test "$(echo "$long_load_avg > 0.5" | bc -l)" = 1
+    fi
 }
 
 is_disk_filling() {
