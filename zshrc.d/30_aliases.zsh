@@ -13,8 +13,9 @@ alias  .....='cd ../../../..'
 alias ......='cd ../../../../..'
 
 # Environment variable LS_COLORS must also exist for this to work.
-alias ls='ls --color=auto --group-directories-first -pv'
-alias lsc='ls --color=auto --group-directories-first -pvA'
+alias ls='ls --color=auto --group-directories-first -p'
+alias lsc='ls --color=auto --group-directories-first -pA'
+
 # Force diff to use color by default.
 alias diff='diff --color'
 
