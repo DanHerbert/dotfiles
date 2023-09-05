@@ -5,6 +5,13 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 alias zgrep='egrep --color=auto'
 
+# Handy cd shortcuts
+alias     ..='cd ..'
+alias    ...='cd ../..'
+alias   ....='cd ../../..'
+alias  .....='cd ../../../..'
+alias ......='cd ../../../../..'
+
 # Environment variable LS_COLORS must also exist for this to work.
 alias ls='ls --color=auto --group-directories-first -pv'
 alias lsc='ls --color=auto --group-directories-first -pvA'
