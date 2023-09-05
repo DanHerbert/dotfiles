@@ -70,7 +70,7 @@ __is_dir_hg() {
   while [ "$cwd" ] && [ ! -d "$cwd/.hg" ]; do
     cwd="${cwd%/*}"
   done
-  echo "$cwd"
+  test -d "$cwd/.hg"
 }
 
 __scm_dir_marker__() {
