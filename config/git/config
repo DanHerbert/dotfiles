@@ -25,6 +25,9 @@
 	# Automatically figure out what remote branch a local branch should get pushed to
 	default = matching
 
+[pull]
+	rebase = true
+
 [advice]
 	detachedHead = false
 
