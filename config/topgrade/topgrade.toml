@@ -1,5 +1,7 @@
 [misc]
-# Using defaults for everything.
+assume_yes = true
+display_time = true
+disable = ["firmware"]
 
 [git]
 repos = [
