@@ -2,6 +2,7 @@
 TIME_ZONE='US/Pacific'
 disk_usage=
 adjusted_load_avg=
+shown_load_type=
 ram_usage=
 WARNING_ORANGE='colour166'
 WARNING_RED='colour160'
@@ -21,10 +22,12 @@ is_cpu_load_high() {
     long_load_avg=$(echo "( ${long_load_avg} / ${performance_cores} )" | bc -l | xargs printf "%.2f")
     if [[ $recent_load_avg -gt $long_load_avg ]]; then
         adjusted_load_avg=$recent_load_avg
+        shown_load_type='1m'
         test "$(echo "$recent_load_avg > 0.7" | bc -l)" = 1
     else
         adjusted_load_avg=$long_load_avg
         # 50% CPU usage for 15 minutes is A LOT on my tiny systems.
+        shown_load_type='15m'
         test "$(echo "$long_load_avg > 0.5" | bc -l)" = 1
     fi
 }
@@ -67,7 +70,7 @@ if [[ -e /var/run/reboot-required ]]; then
 elif is_cpu_load_high; then
     status_fg=$TEXT_WHITE
     status_bg=$WARNING_ORANGE
-    status_right="CPU $adjusted_load_avg $status_right"
+    status_right="CPU($shown_load_type) $adjusted_load_avg $status_right"
 elif is_disk_filling; then
     status_fg=$TEXT_WHITE
     status_bg=$WARNING_ORANGE
