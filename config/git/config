@@ -60,6 +60,8 @@
 	dc = diff --cached
 	cm = commit
 	cma = commit --amend
+	# To keep things linear when others on a project push stuff before me.
+	cmad = commit --amend --date="`date`"
 	co = checkout
 	cob = checkout -b
 	f = fetch
@@ -68,6 +70,12 @@
 	pla = pull --all
 	ps = push
 	psa = push --all
+	# I use tig more often but sometimes plain git log output is nice to have.
+	lg = log --graph --pretty=format:'%C(yellow)%h %Cred%cr %Cblue%an%Cgreen%d %Creset%s'
+	logd = log --oneline --decorate --graph
+	logds = log --oneline --decorate --graph --stat
+	whoiswinning = shortlog -s -n --all
+	puke = !git --no-pager log --stat --graph --all
 
 [include]
 	path = ~/.config/git/untracked_config
