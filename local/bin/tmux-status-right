@@ -20,7 +20,7 @@ is_cpu_load_high() {
     recent_load_avg=$(echo "( ${recent_load_avg} / ${performance_cores} )" | bc -l | xargs printf "%.2f")
     long_load_avg=$(awk '{ print $3 }' /proc/loadavg) # 1 minute load average
     long_load_avg=$(echo "( ${long_load_avg} / ${performance_cores} )" | bc -l | xargs printf "%.2f")
-    if [[ $recent_load_avg -gt $long_load_avg ]]; then
+    if (( $(echo "$recent_load_avg > $long_load_avg" |bc -l) )); then
         adjusted_load_avg=$recent_load_avg
         shown_load_type='1m'
         test "$(echo "$recent_load_avg > 0.7" | bc -l)" = 1
