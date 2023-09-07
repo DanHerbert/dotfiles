@@ -18,7 +18,7 @@ compute_needs_newline() {
     vcs_length=${#vcs_info_msg_0_}
     sys_length="${#__prompt_system_parts}"
     venv_length=${#VIRTUAL_ENV_PROMPT}
-    if [[ $(( venv_length + cwd_length + vcs_length + sys_length )) -ge 32 ]]; then
+    if [[ $(( venv_length + cwd_length + vcs_length + sys_length )) -ge 30 ]]; then
         psvar[1]=true
     fi
 }
@@ -75,6 +75,6 @@ compute_initial_prompt() {
 compute_initial_prompt
 unset -f compute_initial_prompt
 
-zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:*' enable git hg
 zstyle ':vcs_info:git:*' check-for-changes true
 zstyle ':vcs_info:git:*' formats '⎇ %b%a %u%c%m'
