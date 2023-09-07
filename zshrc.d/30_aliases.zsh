@@ -30,6 +30,11 @@ alias code="$HOME/.local/bin/codium"
 
 alias py3='python3'
 
+if ! command -v bat > /dev/null 2>&1 && command -v batcat > /dev/null 2>&1; then
+    alias bat="$(command -v batcat)"
+fi
+alias bless='bat --plain --pager="less --RAW-CONTROL-CHARS --mouse"'
+
 # zsh seems to automatically map completions of this to git, but bash does not.
 alias g='/usr/bin/git'
 
