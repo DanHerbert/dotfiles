@@ -58,29 +58,42 @@ else
     utc_month_day=$(date +'%m-%d' --utc)
     utc_datetime="/ #[fg=colour250,bold]${utc_time}Z $utc_month_day"
 fi
+
 status_right="║ $local_datetime $utc_datetime"
+# This status_right will be (at most) 32 characters before the following code.
 
 status_bg=$NORMAL_GREY
 status_fg=$TEXT_GRAY
 
+prepend_state() {
+    state_to_prepend="$1"
+    if [[ "${status_right:0:1}" != '║' ]]; then
+        status_right="│ $status_right"
+    fi
+    status_right="$state_to_prepend $status_right"
+}
+
+if is_cpu_load_high; then
+    status_fg=$TEXT_WHITE
+    status_bg=$WARNING_ORANGE
+    prepend_state "$shown_load_type CPU $adjusted_load_avg"
+fi
+if is_disk_filling; then
+    status_fg=$TEXT_WHITE
+    status_bg=$WARNING_ORANGE
+    prepend_state "DISK $disk_usage%"
+fi
+if is_ram_use_high; then
+    status_fg=$TEXT_WHITE
+    status_bg=$WARNING_ORANGE
+    prepend_state "RAM $ram_usage%"
+fi
 if [[ -e /var/run/reboot-required ]]; then
     status_fg=$TEXT_WHITE
     status_bg=$WARNING_RED
-    status_right="REBOOT $status_right"
-elif is_cpu_load_high; then
-    status_fg=$TEXT_WHITE
-    status_bg=$WARNING_ORANGE
-    status_right="CPU($shown_load_type) $adjusted_load_avg $status_right"
-elif is_disk_filling; then
-    status_fg=$TEXT_WHITE
-    status_bg=$WARNING_ORANGE
-    status_right="DISK $disk_usage% $status_right"
-elif is_ram_use_high; then
-    status_fg=$TEXT_WHITE
-    status_bg=$WARNING_ORANGE
-    status_right="RAM $ram_usage% $status_right"
-else
-    status_right="$(hostname) $status_right"
+    prepend_state "REBOOT"
+elif [[ ${#status_right} -lt 50 ]]; then
+    prepend_state "$(hostname)"
 fi
 
 status_len=${#status_right}
