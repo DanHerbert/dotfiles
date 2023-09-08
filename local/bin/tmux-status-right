@@ -60,8 +60,8 @@ else
 fi
 
 status_right="║ $local_datetime $utc_datetime"
-# This status_right will be (at most) 32 characters before the following code.
-
+# This status_right will be (at most) 34 characters before the following code.
+# This 34 character length does not include the +20 characters of color data.
 status_bg=$NORMAL_GREY
 status_fg=$TEXT_GRAY
 
@@ -88,15 +88,19 @@ if is_ram_use_high; then
     status_bg=$WARNING_ORANGE
     prepend_state "RAM $ram_usage%"
 fi
+
+# The UTC part of the date has non-printed style data which is 20 chars long.
+status_len=$(( ${#status_right} - 20 ))
+
 if [[ -e /var/run/reboot-required ]]; then
     status_fg=$TEXT_WHITE
     status_bg=$WARNING_RED
     prepend_state "REBOOT"
-elif [[ ${#status_right} -lt 50 ]]; then
+elif [[ $status_len -lt 50 ]]; then
     prepend_state "$(hostname)"
+    status_len=$(( ${#status_right} - 20 ))
 fi
 
-status_len=${#status_right}
 tmux set-option -g status-right-length "$status_len"
 tmux set-option -g status-style bg=$status_bg,fg=$status_fg
 echo "$status_right"
