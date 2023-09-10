@@ -35,6 +35,13 @@ if ! command -v bat > /dev/null 2>&1 && command -v batcat > /dev/null 2>&1; then
 fi
 alias bless='bat --plain --pager="less --RAW-CONTROL-CHARS"'
 
+# --verbose Output all details for potential debugging
+# --update Only copy the things that need it
+# --partial Don't delete partial transfers (makes resuming easier)
+# --info=flist2,progress2 Overall progress, not individual files
+# --human-readable Use human units
+alias rsync='rsync --verbose --update --partial --info=flist2,progress2 --human-readable'
+
 # zsh seems to automatically map completions of this to git, but bash does not.
 alias g='/usr/bin/git'
 
