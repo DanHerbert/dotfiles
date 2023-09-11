@@ -10,22 +10,18 @@
 
 autoload -Uz vcs_info
 precmd_vcs_info() { vcs_info }
-compute_needs_newline() {
-    # zsh prompt expansions treat "empty" as false and all other values as true.
-    psvar[1]=''
-    cwd=$(cd "$PWD" && dirs -p | head -1)
-    cwd_length=${#cwd}
-    vcs_length=${#vcs_info_msg_0_}
-    sys_length="${#__prompt_system_parts}"
-    venv_length=${#VIRTUAL_ENV_PROMPT}
-    if [[ $(( venv_length + cwd_length + vcs_length + sys_length )) -ge 30 ]]; then
-        psvar[1]=true
-    fi
+
+___LIB_DIR="${0:a:h}/.."
+compute_prompt_psvars() {
+    for script in "$___LIB_DIR"/zshprompt.d/*.zsh; do
+        source "$script"
+    done
 }
-precmd_functions+=( precmd_vcs_info compute_needs_newline )
+
+precmd_functions+=( precmd_vcs_info compute_prompt_psvars )
 
 compute_initial_prompt() {
-    local access_style='%{%F{11}%}' # Bright yellow
+    local access_style='%{%F{226}%}' # Bright yellow
     local user_style='%{%F{66}%}' # Muted cyan
     local host_style='%{%F{95}%}' # Muted light red
     local cwd_style='%{%F{65}%}' # Muted green
@@ -53,24 +49,25 @@ compute_initial_prompt() {
     local system_parts
     if [[ $(id -u) -ne 1000 ]]; then
         system_parts=$user_style'%n%{%b%f%k%}'
+        psvar[1]="$(id -un)"
     fi
     if [[ -n $SSH_CLIENT ]]; then
         if [[ -n $system_parts ]]; then
             system_parts+='%{%F{60}%}@%{%f%}'
+            psvar[1]+='@'
         fi
         system_parts+=$host_style'%m%{%f%}'
     fi
     if [[ -n $system_parts ]]; then
+        psvar[1]+=' '
         system_parts+=' '
     fi
 
-    PS1="$system_parts$cwd_style"'%~%{%f%} '"$vcs_style"'${vcs_info_msg_0_}%{%f%}'%1(V.$'\n'.)"$access_style"'%#%{%b%f%} '
-    PS2="$access_style"'>%{%f%} '
-    __prompt_system_parts="$system_parts"
+    PS1="$system_parts$cwd_style"'%~%{%f%} '"$vcs_style"'${vcs_info_msg_0_}%{%f%}'%9(V.$'\n'.)"$access_style"'%#%{%b%f%} '
+    PS2="$access_style"'⟩%{%f%} '
 
     export PS1
     export PS2
-    export __prompt_system_parts
 }
 compute_initial_prompt
 unset -f compute_initial_prompt

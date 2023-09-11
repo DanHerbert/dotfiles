@@ -30,10 +30,17 @@ alias code="$HOME/.local/bin/codium"
 
 alias py3='python3'
 
-if ! command -v bat > /dev/null 2>&1 && command -v batcat > /dev/null 2>&1; then
+if ! command -v bat >/dev/null 2>&1 && command -v batcat >/dev/null 2>&1; then
     alias bat="$(command -v batcat)"
 fi
 alias bless='bat --plain --pager="less --RAW-CONTROL-CHARS"'
+
+if [[ ! -e $XDG_CONFIG_HOME/wget/wget-hsts.txt ]]; then
+    mkdir -p $XDG_CONFIG_HOME/wget
+    touch $XDG_CONFIG_HOME/wget/wget-hsts.txt
+fi
+
+alias wget='wget --hsts-file="$XDG_CONFIG_HOME/wget/wget-hsts.txt"'
 
 # --verbose Output all details for potential debugging
 # --update Only copy the things that need it

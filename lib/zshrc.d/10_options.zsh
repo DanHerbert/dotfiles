@@ -19,6 +19,8 @@ zstyle :compinstall filename "$HOME/.zshrc"
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
 setopt extendedglob
+setopt promptsubst
+
 setopt histexpiredupsfirst
 setopt histfindnodups
 setopt histignorealldups
@@ -28,5 +30,4 @@ setopt histnostore
 setopt histreduceblanks
 setopt histsavenodups
 setopt incappendhistory
-setopt promptsubst
 setopt sharehistory

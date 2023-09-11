@@ -8,7 +8,7 @@
 	path = home/.vim/pack/plugins/start/editorconfig
 	url = https://github.com/editorconfig/editorconfig-vim
 [submodule "zsh-command-time"]
-	path = plugins/zsh-command-time
+	path = lib/plugins/zsh-command-time
 	url = https://github.com/popstas/zsh-command-time.git
 [submodule "config/cheat/cheatsheets/community"]
 	path = config/cheat/cheatsheets/community
