@@ -30,7 +30,7 @@ if [[ -r /usr/share/bash-completion/bash_completion ]]; then
   source /usr/share/bash-completion/bash_completion
 fi
 
-alias ls='ls --color=auto -pv'
+alias ls='ls --color=auto -p'
 
 if [ -x "$HOME/.local/bin/codium" ]; then
     alias code='$HOME/.local/bin/codium'
