@@ -34,7 +34,7 @@ is_cpu_load_high() {
 
 is_disk_filling() {
     disk_usage=$(df -hl --output=pcent / | tail -n +2 | sed 's/[^0-9]*//g')
-    test "$disk_usage" -ge 60
+    test "$disk_usage" -ge 70
 }
 
 is_ram_use_high() {
