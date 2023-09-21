@@ -89,17 +89,16 @@ if is_ram_use_high; then
     prepend_state "RAM $ram_usage%"
 fi
 
-# The UTC part of the date has non-printed style data which is 20 chars long.
-status_len=$(( ${#status_right} - 20 ))
-
 if [[ -e /var/run/reboot-required ]]; then
     status_fg=$TEXT_WHITE
     status_bg=$WARNING_RED
     prepend_state "REBOOT"
 elif [[ $status_len -lt 50 ]]; then
     prepend_state "$(hostname)"
-    status_len=$(( ${#status_right} - 20 ))
 fi
+
+# The UTC part of the date has non-printed style data which is 20 chars long.
+status_len=$(( ${#status_right} - 20 ))
 
 tmux set-option -g status-right-length "$status_len"
 tmux set-option -g status-style bg=$status_bg,fg=$status_fg
