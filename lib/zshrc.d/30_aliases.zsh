@@ -12,6 +12,9 @@ alias   ....='cd ../../..'
 alias  .....='cd ../../../..'
 alias ......='cd ../../../../..'
 
+alias userctl='systemctl --user'
+alias jctl='journalctl -o short-iso --no-hostname'
+
 # Environment variable LS_COLORS must also exist for this to work.
 alias ls='ls --color=auto --group-directories-first -p'
 alias lsa='ls --color=auto --group-directories-first -pA'
