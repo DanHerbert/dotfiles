@@ -5,6 +5,7 @@
 # psvar[9]=prompt newline
 
 compute_psvars() {
+    local PROMPT_WRAP_LIMIT
     PROMPT_WRAP_LIMIT=30
     local cwd
     cwd=$(cd "$PWD" && dirs -p | head -1)

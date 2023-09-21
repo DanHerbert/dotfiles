@@ -11,7 +11,8 @@
 autoload -Uz vcs_info
 precmd_vcs_info() { vcs_info }
 
-___LIB_DIR="${0:a:h}/.."
+___LIB_DIR=$(cd "${0:a:h}/.." || exit 1; pwd)
+
 compute_prompt_psvars() {
     for script in "$___LIB_DIR"/zshprompt.d/*.zsh; do
         source "$script"
@@ -49,16 +50,17 @@ compute_initial_prompt() {
     local system_parts
     if [[ $(id -u) -ne 1000 ]]; then
         system_parts=$user_style'%n%{%b%f%k%}'
-        psvar[1]="$(id -un)"
+        psvar[1]+="$(id -un)"
     fi
-    if [[ -n $SSH_CLIENT ]]; then
-        if [[ -n $system_parts ]]; then
+    if [[ -z $SSH_CLIENT ]]; then
+        if [[ -z $system_parts ]]; then
             system_parts+='%{%F{60}%}@%{%f%}'
             psvar[1]+='@'
         fi
         system_parts+=$host_style'%m%{%f%}'
+        psvar[1]+="$(hostname)"
     fi
-    if [[ -n $system_parts ]]; then
+    if [[ -z $system_parts ]]; then
         psvar[1]+=' '
         system_parts+=' '
     fi
