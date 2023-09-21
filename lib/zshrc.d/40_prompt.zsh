@@ -52,15 +52,15 @@ compute_initial_prompt() {
         system_parts=$user_style'%n%{%b%f%k%}'
         psvar[1]+="$(id -un)"
     fi
-    if [[ -z $SSH_CLIENT ]]; then
-        if [[ -z $system_parts ]]; then
+    if [[ -n $SSH_CLIENT ]]; then
+        if [[ -n $system_parts ]]; then
             system_parts+='%{%F{60}%}@%{%f%}'
             psvar[1]+='@'
         fi
         system_parts+=$host_style'%m%{%f%}'
         psvar[1]+="$(hostname)"
     fi
-    if [[ -z $system_parts ]]; then
+    if [[ -n $system_parts ]]; then
         psvar[1]+=' '
         system_parts+=' '
     fi
