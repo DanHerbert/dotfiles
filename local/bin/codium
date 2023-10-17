@@ -5,8 +5,13 @@
 # loaded correcly with the codium app.
 # Errors during launch are logged to ~/.local/var/log/codium-errors.log
 
-XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-~/.config}
+XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 flags_file="$XDG_CONFIG_HOME/codium-flags.conf"
+
+XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
+mkdir -p "$XDG_STATE_HOME/codium/"
+log_file="$XDG_STATE_HOME/codium/errors.log"
+
 flags=()
 
 # Allow users to override command-line options
@@ -20,6 +25,7 @@ if [[ -f "$flags_file" ]]; then
     fi
 fi
 
-# Launch
+# Linter: Flags here can't be quoted because they would otherwise be treated as
+# a smooshed together single flag.
 # shellcheck disable=SC2068
-exec /opt/vscodium-bin/bin/codium ${flags[@]} "$@" 2> >(ts '[%Y-%m-%dT%H:%M:%S]' >> "$HOME/.local/var/log/codium-errors.log")
+exec /opt/vscodium-bin/bin/codium ${flags[@]} "$@" 2> >(ts '[%Y-%m-%dT%H:%M:%S]' >> "$log_file")
