@@ -38,10 +38,7 @@
     },
     "[html]": {
         "editor.tabSize": 4,
-        "editor.defaultFormatter": "vscode.html-language-features"
-    },
-    "[javascript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "vscode.html-language-features",
     },
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
