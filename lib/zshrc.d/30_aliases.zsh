@@ -57,6 +57,8 @@ alias g='/usr/bin/git'
 
 alias sudo='nocorrect sudo '
 
+alias adb='HOME="$XDG_DATA_HOME"/android adb'
+
 # Aliases I've used in the past, but keep a reminder message for since I still
 # use them out of habit sometimes.
 alias gs='echo "You never want to open ghostscript"'
