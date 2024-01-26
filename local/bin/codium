@@ -3,7 +3,7 @@
 
 # Wrapper launcher script for VSCodium to ensure the codium-flags.conf file gets
 # loaded correcly with the codium app.
-# Errors during launch are logged to ~/.local/var/log/codium-errors.log
+# Errors during launch are logged to ~/.local/state/codium/errors.log
 
 XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 flags_file="$XDG_CONFIG_HOME/codium-flags.conf"
