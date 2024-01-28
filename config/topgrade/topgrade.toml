@@ -1,4 +1,5 @@
 [misc]
+pre_sudo = false
 assume_yes = true
 display_time = true
 disable = ["firmware"]
