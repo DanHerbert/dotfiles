@@ -7,7 +7,7 @@ disable = ["firmware"]
 # Only pull the repos listed above.
 pull_predefined = true
 # Arguments to pass Git when pulling Repositories
-pull_arguments = "--rebase --autostash"
+arguments = "--rebase --autostash"
 
 [linux]
 # I use paru for AUR but this option feels more evergreen.
