@@ -5,7 +5,10 @@
 # intentionally small & standalone with no references to any other files.
 
 # If not running interactively, don't do anything.
-[[ $- != *i* ]] && return
+case $- in
+    *i*) ;;
+      *) return;;
+esac
 
 [[ $DISPLAY ]] && shopt -s checkwinsize
 
