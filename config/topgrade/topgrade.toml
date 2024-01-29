@@ -1,10 +1,12 @@
 [misc]
-pre_sudo = false
+pre_sudo = true
 assume_yes = true
 display_time = true
 disable = ["firmware"]
+cleanup = true
 
 [git]
+repos = []
 # Only pull the repos listed above.
 pull_predefined = true
 # Arguments to pass Git when pulling Repositories
