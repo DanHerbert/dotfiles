@@ -3,7 +3,6 @@ pre_sudo = true
 assume_yes = true
 display_time = true
 disable = ["firmware"]
-cleanup = true
 
 [git]
 repos = []
