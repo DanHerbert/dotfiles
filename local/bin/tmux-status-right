@@ -1,5 +1,5 @@
 #!/bin/bash
-TIME_ZONE='US/Pacific'
+TIME_ZONE='US/New_York'
 disk_usage=
 adjusted_load_avg=
 shown_load_type=
