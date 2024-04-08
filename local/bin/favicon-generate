@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Generate favicon png & ico files from an SVG file.
+
+for cmd in {svgo,rsvg-convert,optipng,convert}; do
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        echo "$cmd is not installed on this system!"
+        exit 1
+    fi
+done
+
+set -eux
+
+input_svg="$1"
+source_svg=$(readlink -f "$input_svg")
+out_dir=$(dirname "$source_svg")
+
+svgo "$source_svg"
+
+for size in {1024,512,256,128,64,32,16}; do
+    rsvg-convert -h "$size" -w "$size" "$source_svg" > "$out_dir/favicon-${size}x${size}.png"
+    optipng "$out_dir/favicon-${size}x${size}.png"
+done
+
+convert -background transparent "$out_dir/favicon-1024x1024.png" -compress none -define icon:auto-resize=16,32,48,64,256 "$out_dir/favicon.ico"
