@@ -9,17 +9,23 @@ for cmd in {svgo,rsvg-convert,optipng,convert}; do
     fi
 done
 
+if [ "$#" -ne 2 ]; then
+    echo "Expected 2 arguments (input svg & output directory) but only $# were passed."
+fi
+
 set -eux
 
 input_svg="$1"
+out_dir="$2"
 source_svg=$(readlink -f "$input_svg")
-out_dir=$(dirname "$source_svg")
 
-svgo "$source_svg"
+svgo --output "$out_dir" "$source_svg"
 
-for size in {1024,512,256,128,64,32,16}; do
-    rsvg-convert -h "$size" -w "$size" "$source_svg" > "$out_dir/favicon-${size}x${size}.png"
-    optipng "$out_dir/favicon-${size}x${size}.png"
+# Sizes based on Apple's recommendations:
+# https://developer.apple.com/design/human-interface-guidelines/app-icons
+for size in {1024,512,256,192,180,167,152,128,120,114,87,80,64,32,16}; do
+    rsvg-convert -h "$size" -w "$size" "$source_svg" > "$out_dir/favicon-${size}.png"
+    optipng "$out_dir/favicon-${size}.png"
 done
 
-convert -background transparent "$out_dir/favicon-1024x1024.png" -compress none -define icon:auto-resize=16,32,48,64,256 "$out_dir/favicon.ico"
+convert -background transparent "$out_dir/favicon-1024.png" -compress none -define icon:auto-resize=16,32,48,64,256 "$out_dir/favicon.ico"
