@@ -49,3 +49,5 @@ base_config_path="$lib_dir/prusa_base_configs.txt"
 
 cat "$lib_dir/HerbertResearchHeading.txt" "$base_config_path" "$lib_dir/HerbertResearchBody.ini" > "$lib_dir/HerbertResearch.ini"
 rm "$base_config_path"
+set +x
+echo 'Config written to '"$(realpath "$lib_dir/HerbertResearch.ini")"
