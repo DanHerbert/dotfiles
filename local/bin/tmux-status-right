@@ -20,7 +20,7 @@ is_cpu_load_high() {
     performance_cores=$(lscpu --all --extended | tail -n +2 | awk '{ print $4 }' | uniq -c | awk '{ print $1 }' | uniq -c | head -n1 | awk '{ print $1 }')
     recent_load_avg=$(awk '{ print $1 }' /proc/loadavg) # 1 minute load average
     recent_load_avg=$(echo "( ${recent_load_avg} / ${performance_cores} )" | bc -l | xargs printf "%.2f")
-    long_load_avg=$(awk '{ print $3 }' /proc/loadavg) # 1 minute load average
+    long_load_avg=$(awk '{ print $3 }' /proc/loadavg) # 15 minute load average
     long_load_avg=$(echo "( ${long_load_avg} / ${performance_cores} )" | bc -l | xargs printf "%.2f")
     if (( $(echo "$recent_load_avg > $long_load_avg" |bc -l) )); then
         adjusted_load_avg=$recent_load_avg
