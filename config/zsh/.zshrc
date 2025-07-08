@@ -6,7 +6,7 @@ if [[ ! -o interactive ]]; then
 fi
 
 zshrc_file="$(print -P %N)"
-dotfiles_root="$(realpath "${zshrc_file:P:h}/..")"
+dotfiles_root="$(realpath "${zshrc_file:P:h}/../..")"
 
 for script in "$dotfiles_root"{/lib/zshrc.d,/lib/plugins/*,/untrackedrc.d}/*.{zsh,sh}(N); do
     source "$script"
