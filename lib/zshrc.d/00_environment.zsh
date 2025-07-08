@@ -31,8 +31,6 @@ if [[ -d "$HOME/.local/lib/bc.d" ]]; then
     export BC_ENV_ARGS
 fi
 
-HISTFILE="$XDG_STATE_HOME"/zsh/history
-
 ZSH_COMMAND_TIME_COLOR="250"  # Gray
 ZSH_COMMAND_TIME_EXCLUDE=(vim journalctl tig less "tail -f" "dmesg -w" "dmesg -W")
 ZSH_COMMAND_TIME_MSG="[%%*] Runtime: %s"
