@@ -26,6 +26,15 @@ export HOME
 (cd config && find . -maxdepth 2 -type d -exec sudo -u "$P_USER" mkdir -p "$HOME/.config/{}" \;)
 echo 'Placeholder directories for stow targets have been created, if needed.'
 
+# Not all contexts will automatically load ~/.config/environment.d/ configs
+# Creating this file ensures environment variables always get loaded within
+# my default zsh shell.
+if [ -z "$XDG_CONFIG_HOME" ] && [ ! -f "$HOME/.zprofile" ]; then
+    # Linter: I really want the shell variable to be written to the disk file.
+    # shellcheck disable=SC2016
+    echo 'ZDOTDIR=$HOME/.config/zsh' > "$HOME/.zprofile"
+fi
+
 set -x
 sudo -u "$P_USER" stow --verbose=1 --target="$HOME/.config" config
 sudo -u "$P_USER" stow --verbose=1 --target="$HOME/.local" local
