@@ -19,10 +19,8 @@ fi
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 export HISTCONTROL=ignorespace:ignoredups:erasedups
 export EDITOR='/usr/bin/vim'
+export SUDO_EDITOR='/usr/bin/vim'
 export VISUAL='/usr/bin/vim'
-if [ -n "${DISPLAY+x}" ] && [ -x "$HOME/.local/bin/codium" ]; then
-    export VISUAL="$HOME/.local/bin/codium"
-fi
 
 PATH="$HOME/.local/bin:$PATH"
 

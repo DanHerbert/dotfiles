@@ -12,8 +12,8 @@ if [[ -z $XDG_CONFIG_HOME ]]; then
     done
 fi
 
-if [[ -n ${DISPLAY+x} ]] && [[ -x "/opt/vscodium-bin/bin/codium" ]]; then
-    export VISUAL="$HOME/.local/bin/codium"
+if [[ -n ${DISPLAY} ]] && [[ -n ${WAYLAND_DISPLAY} ]] && [[ -x "/opt/vscodium-bin/bin/codium" ]]; then
+    export VISUAL="$HOME/.local/bin/codium --wait"
 fi
 
 # A surprising amount of modern apps misbehave without this specific value.
