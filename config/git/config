@@ -46,7 +46,7 @@
 	oldMoved = 88 # Deep-ish red
 	newMoved = 34 # Different green
 	oldMovedAlternative = 124 # Less deep-ish red
-	newMovedAlternative = 76 # Slightly brigher green
+	newMovedAlternative = 76 # Slightly brighter green
 	meta = 12 # Blue
 	frag = 5 # Purple
 	context = 247 # Gray

@@ -8,3 +8,24 @@ log/
 __MACOSX
 *.old
 *~
+# Temporary lock file while building hugo projects
+/.hugo_build.lock
+# PGP file that should never be tracked
+secring.*
+# LibreOffice locks
+.~lock.*#
+# Swap Files #
+.*.kate-swp
+.swp.*
+.netrwhist
+.stversions
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
+# Metadata left by Dolphin file manager, which comes with KDE Plasma
+.directory
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
+# Log files created by default by the nohup command
+nohup.out
