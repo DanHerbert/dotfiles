@@ -20,7 +20,6 @@ export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 export HISTCONTROL=ignorespace:ignoredups:erasedups
 export EDITOR='/usr/bin/vim'
 export SUDO_EDITOR='/usr/bin/vim'
-export VISUAL='/usr/bin/vim'
 
 PATH="$HOME/.local/bin:$PATH"
 
