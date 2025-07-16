@@ -33,6 +33,7 @@ if [ -z "$XDG_CONFIG_HOME" ] && [ ! -f "$HOME/.zprofile" ]; then
     # Linter: I really want the shell variable to be written to the disk file.
     # shellcheck disable=SC2016
     echo 'ZDOTDIR=$HOME/.config/zsh' > "$HOME/.zprofile"
+    echo "Created [$HOME/.zprofile] to ensure ZSH runs correctly."
 fi
 
 set -x
