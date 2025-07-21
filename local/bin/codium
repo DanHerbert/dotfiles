@@ -30,11 +30,11 @@ fi
 # double dash will break things so it gets cleared out if we detect the script
 # receives any other args.
 args_separator='--'
-if [[ "$*" == *" -"* ]]; then
+if [[ "$*" == *" -"* ]] || [[ "$*" == "-"* ]]; then
     args_separator=''
 fi
 
 # Linter: Flags here can't be quoted because they would otherwise be treated as
 # a smooshed together single flag.
 # shellcheck disable=SC2068
-exec /opt/vscodium-bin/bin/codium ${flags[@]} $args_separator "$@" 2> >(ts '[%Y-%m-%dT%H:%M:%S]' >> "$log_file")
+exec /opt/vscodium-bin/bin/codium ${flags[@]} $args_separator $@ 2> >(ts '[%Y-%m-%dT%H:%M:%S]' >> "$log_file")
