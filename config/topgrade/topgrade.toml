@@ -2,12 +2,11 @@
 pre_sudo = true
 assume_yes = true
 display_time = true
-disable = ["firmware"]
 
 [git]
 repos = []
 # Only pull the repos listed above.
-pull_predefined = true
+pull_predefined = false
 # Arguments to pass Git when pulling Repositories
 arguments = "--rebase --autostash"
 
