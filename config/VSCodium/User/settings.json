@@ -25,7 +25,9 @@
     "files.associations": {
         "*.json5": "jsonc",
         "**/config/git/config": "properties",
-        "**/cheat/cheatsheets/personal/**": "markdown"
+        "**/cheat/cheatsheets/personal/**": "markdown",
+        "**/fontconfig/*.conf": "xml",
+        "**/*-flags.conf": "plaintext"
     },
     "[shellscript]": {
         "editor.tabSize": 4,
@@ -57,5 +59,8 @@
         "editor.insertSpaces": false,
         "editor.tabSize": 4,
         "editor.rulers": [80,100]
+    },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
     }
 }
