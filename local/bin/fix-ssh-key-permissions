@@ -1,0 +1,9 @@
+#!/bin/bash
+set -x
+primary_group=$(id -gn "$USER")
+sudo chown "$USER":"$primary_group" "$HOME"/.ssh/id_*
+sudo chown "$USER":"$primary_group" "$HOME"/.ssh/keys/*
+sudo chmod 600 .ssh/id_*
+sudo chmod 644 .ssh/id_*.pub
+sudo chmod 600 .ssh/keys/*
+sudo chmod 644 .ssh/keys/*.pub
