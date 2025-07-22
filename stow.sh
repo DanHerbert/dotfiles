@@ -40,3 +40,5 @@ set -x
 sudo -u "$P_USER" stow --verbose=1 --target="$HOME/.config" config
 sudo -u "$P_USER" stow --verbose=1 --target="$HOME/.local" local
 sudo -u "$P_USER" stow --verbose=1 --target="$HOME" home
+
+hash -r
