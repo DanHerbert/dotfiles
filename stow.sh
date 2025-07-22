@@ -1,7 +1,7 @@
 #!/bin/sh
 # This script is intentionally idempotent so that it can safely "sync" new files
 # when run repeatedly.
-set -eu
+set -e
 
 if ! command -v stow >/dev/null 2>&1; then
     echo 'GNU stow is not installed. All package managers call this "stow".'
