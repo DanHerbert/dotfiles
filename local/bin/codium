@@ -1,6 +1,16 @@
 #!/bin/bash
 # Based on https://aur.archlinux.org/pkgbase/electron-blur-me-not
 
+if [ ! -f /opt/vscodium-bin/bin/codium ]; then
+    if [[ "$*" == *"--version"* ]]; then
+        echo '0.0.0'
+        echo '0'
+        echo '0'
+    fi
+    echo 'Codium is not installed'
+    exit 0
+fi
+
 # Wrapper launcher script for VSCodium to ensure the codium-flags.conf file gets
 # loaded correctly with the codium app.
 # Errors during launch are logged to ~/.local/state/codium/errors.log
