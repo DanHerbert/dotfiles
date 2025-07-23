@@ -4,6 +4,14 @@
 # minimal rc file exists to give me some of my preferred defaults. This file is
 # intentionally small & standalone with no references to any other files.
 
+# Ensure environment vars are loaded if XDG has not done it already. This
+# intentionally happens even in a non-interactive shell.
+if [[ -d "$HOME"/.config/environment.d/ ]] && [[ -z $XDG_CONFIG_HOME ]]; then
+    for conf in "$HOME"/.config/environment.d/*.conf; do
+        set -a; source <(grep -vE '^#' "$conf"); set +a;
+    done
+fi
+
 # If not running interactively, don't do anything.
 case $- in
     *i*) ;;
