@@ -14,26 +14,26 @@ fi
 PROJECT_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 P_USER=$(stat -c "%U" "$PROJECT_ROOT")
 # Stow internally expects a HOME env var.
-HOME="$(bash -c "echo ~$P_USER")"
+HOME="$(getent passwd "$P_USER" | cut -d: -f6)"
 export HOME
 
 # Setup destination directories for everything in the repo. This will make it
 # easier to add machine-specific files without being tracked as part of this
 # dotfiles repo. vim needs extra depth to ensure that the plugins directory is a
 # real directory and not a symlink, hence the difference in home/
-(cd home && find . -maxdepth 4 -type d -exec sudo -u "$P_USER" mkdir -p "$HOME/{}" \;)
-(cd local && find . -maxdepth 2 -type d -exec sudo -u "$P_USER" mkdir -p "$HOME/.local/{}" \;)
-(cd config && find . -maxdepth 2 -type d -exec sudo -u "$P_USER" mkdir -p "$HOME/.config/{}" \;)
+(cd home && find . -maxdepth 4 -type d -exec sudo -u "$P_USER" mkdir -vp "$HOME/{}" \;)
+(cd local && find . -maxdepth 2 -type d -exec sudo -u "$P_USER" mkdir -vp "$HOME/.local/{}" \;)
+(cd config && find . -maxdepth 2 -type d -exec sudo -u "$P_USER" mkdir -vp "$HOME/.config/{}" \;)
 echo 'Placeholder directories for stow targets have been created, if needed.'
 
 # Not all contexts will automatically load ~/.config/environment.d/ configs
 # Creating this file ensures environment variables always get loaded within
 # my default zsh shell.
-if [ -z "$XDG_CONFIG_HOME" ] && [ ! -f "$HOME/.zprofile" ]; then
+if [ -z "$XDG_CONFIG_HOME" ] && [ ! -f "$HOME/.zshenv" ]; then
     # Linter: I really want the shell variable to be written to the disk file.
     # shellcheck disable=SC2016
     echo 'ZDOTDIR=$HOME/.config/zsh' > "$HOME/.zshenv"
-    echo "Created [$HOME/.zprofile] to ensure ZSH runs correctly."
+    echo "Created [$HOME/.zshenv] to ensure ZSH runs correctly."
 fi
 
 set -x
