@@ -57,8 +57,15 @@ compute_initial_prompt() {
             system_parts+='%{%F{60}%}@%{%f%}'
             psvar[1]+='@'
         fi
-        system_parts+=$host_style'%m%{%f%}'
-        psvar[1]+="$(hostname)"
+        ssh_client_ip=$(echo $SSH_CLIENT | awk '{ print $1 }')
+        if [[ -f "$XDG_CONFIG_HOME/hostname-public.txt" ]] && [[ "$ssh_client_ip" == "$(gatewayip)" ]]; then
+            public_host=$(cat "$XDG_CONFIG_HOME/hostname-public.txt")
+            system_parts+=$host_style$public_host'%{%f%}'
+            psvar[1]+="$public_host"
+        else
+            system_parts+=$host_style"$(hostname --long)"'%{%f%}'
+            psvar[1]+="$(hostname --long)"
+        fi
     fi
     if [[ -n $system_parts ]]; then
         psvar[1]+=' '
