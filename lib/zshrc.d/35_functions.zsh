@@ -37,5 +37,5 @@ perf_cores() {
 }
 
 totalcores() {
-    grep -E '^cpu\scores' /proc/cpuinfo | uniq |  awk '{print $4}'
+    lscpu --all --extended | tail -n +2 | awk '{ print $4 }' | uniq | wc -l
 }
