@@ -46,7 +46,7 @@
         git stash pop
     fi
     if [ "$new_version" != "$old_version" ] || [ "$old_submodule_version" != "$new_submodule_version" ]; then
-        "$PROJECT_ROOT/stow.sh"
+        source "$PROJECT_ROOT/stow.sh"
     fi
 }
 exit
