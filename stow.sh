@@ -1,12 +1,6 @@
 #!/bin/sh
 # This script is intentionally idempotent so that it can safely "sync" new files
 # when run repeatedly without any negative side-effects.
-set -e
-
-if ! command -v stow >/dev/null 2>&1; then
-    echo 'GNU stow is not installed. All package managers call this "stow".'
-    exit 1
-fi
 
 # is_sourced borrowed from https://stackoverflow.com/a/28776166
 is_sourced() {
@@ -27,13 +21,27 @@ if ! is_sourced; then
     exit 1
 fi
 
+if ! command -v stow >/dev/null 2>&1; then
+    echo 'GNU stow is not installed. All package managers call this "stow".'
+    return 1
+fi
+
+uninitialized_submodules="$(git submodule status | grep -cE '^-')"
+if [ "$uninitialized_submodules" -gt 0 ]; then
+    echo 'dotfiles repo has uninitialized submodules.'
+    echo 'Fix this by running "git submodule update --init --recursive"'
+    unset uninitialized_submodules
+    return 1
+fi
+unset uninitialized_submodules
+
 # Within the non-login shell triggered through a git hook via a python service
 # the usual $HOME doesn't exist. It also will not point to the correct home
 # since this same situation also means the current user would always be root.
-PROJECT_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
-P_USER=$(stat -c "%U" "$PROJECT_ROOT")
+if ! PROJECT_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd); then return 1; fi
+if ! P_USER=$(stat -c "%U" "$PROJECT_ROOT"); then return 1; fi
 # Stow internally expects a HOME env var.
-U_HOME="$(getent passwd "$P_USER" | cut -d: -f6)"
+if ! U_HOME="$(getent passwd "$P_USER" | cut -d: -f6)"; then return 1; fi
 
 # Setup destination directories for everything in the repo. This will make it
 # easier to add machine-specific files without being tracked as part of this
@@ -55,9 +63,9 @@ if [ -z "$XDG_CONFIG_HOME" ] && [ ! -f "$U_HOME/.zshenv" ]; then
 fi
 
 set -x
-sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME/.config" config
-sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME/.local" local
-sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME" home
+if ! sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME/.config" config; then set +x; return 1; fi
+if ! sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME/.local" local; then set +x; return 1; fi
+if ! sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME" home; then set +x; return 1; fi
 set +x
 
 unset is_sourced
