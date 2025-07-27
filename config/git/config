@@ -28,6 +28,9 @@
 [pull]
 	rebase = true
 
+[clone]
+	recurse-submodules = true
+
 [advice]
 	detachedHead = false
 
