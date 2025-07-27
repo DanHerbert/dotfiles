@@ -34,7 +34,7 @@ fi
 # Yikes to this command, but this is what it takes to allow environment
 # variables defined with ~/.config/environment.d/*.conf within SSH sessions
 # without any shell RC hacks.
-SSH_TMUX_CMD="/usr/bin/systemd-run --user -E SSH_CLIENT=\"\$SSH_CLIENT\" -E SSH_CONNECTION=\"\$SSH_CONNECTION\" -E SSH_TTY=\"\$SSH_TTY\" --pty --same-dir --wait --collect --service-type=exec /usr/bin/dash -c '/usr/bin/systemd-run --scope --user /usr/bin/tmux new -As work'"
+SSH_TMUX_CMD="/usr/bin/systemd-run --user -E SSH_CLIENT=\"\$SSH_CLIENT\" -E SSH_CONNECTION=\"\$SSH_CONNECTION\" -E SSH_TTY=\"\$SSH_TTY\" --pty --same-dir --wait --collect --service-type=exec /usr/bin/dash -c '/usr/bin/systemd-run --scope --user /usr/bin/tmux new -As work 2>/dev/null' 2> /dev/null"
 
 ZSH_COMMAND_TIME_COLOR="250"  # Gray
 ZSH_COMMAND_TIME_EXCLUDE=(vim journalctl tig less "tail -f" "dmesg -w" "dmesg -W")
