@@ -4,7 +4,6 @@ assume_yes = true
 display_time = true
 
 [git]
-repos = []
 # Only pull the repos listed above.
 pull_predefined = false
 # Arguments to pass Git when pulling Repositories
