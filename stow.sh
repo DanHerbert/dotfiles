@@ -10,6 +10,9 @@ fi
 
 # is_sourced borrowed from https://stackoverflow.com/a/28776166
 is_sourced() {
+    if [ -n "$INSIDE_UPDATE_SCRIPT" ]; then
+        return 0
+    fi
     if [ -n "$ZSH_VERSION" ]; then
         case $ZSH_EVAL_CONTEXT in *:file:*) return 0 ;; esac
     else # Add additional POSIX-compatible shell names here, if needed.
