@@ -6,7 +6,7 @@
 {
     PROJECT_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 
-    set -eux
+    set -ex
 
     cd "$PROJECT_ROOT" || exit 1
 
