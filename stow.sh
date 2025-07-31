@@ -58,7 +58,7 @@ echo 'Placeholder directories for stow targets have been created, if needed.'
 if [ -z "$XDG_CONFIG_HOME" ] && [ ! -f "$U_HOME/.zshenv" ]; then
     # Linter: I really want the shell variable to be written to the disk file.
     # shellcheck disable=SC2016
-    echo 'ZDOTDIR=$U_HOME/.config/zsh' > "$U_HOME/.zshenv"
+    echo 'ZDOTDIR=$HOME/.config/zsh' > "$U_HOME/.zshenv"
     echo "Created [$U_HOME/.zshenv] to ensure ZSH runs correctly."
 fi
 
