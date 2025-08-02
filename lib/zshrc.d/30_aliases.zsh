@@ -12,7 +12,8 @@ alias   ....='cd ../../..'
 alias  .....='cd ../../../..'
 alias ......='cd ../../../../..'
 
-alias userctl='systemctl --user'
+alias sctl='systemctl'
+alias uctl='systemctl --user'
 alias jctl='journalctl -o short-iso --no-hostname'
 
 # Environment variable LS_COLORS must also exist for this to work.
