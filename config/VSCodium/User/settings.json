@@ -5,7 +5,7 @@
     "editor.rulers": [
         80, 100, 120
     ],
-    "editor.fontFamily": "Inconsolata, \"Iosevka fixed\", sarasa-gothic, monospace",
+    "editor.fontFamily": "Inconsolata, monospace",
     "editor.renderWhitespace": "all",
     "editor.wrappingIndent": "indent",
     "editor.fontSize": 20,
