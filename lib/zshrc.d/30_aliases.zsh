@@ -37,7 +37,17 @@ alias code="$HOME/.local/bin/codium"
 alias py3='python3'
 
 if ! command -v bat >/dev/null 2>&1 && command -v batcat >/dev/null 2>&1; then
-    alias bat="$(command -v batcat)"
+    batpath="$(command -v batcat)"
+    if [[ -d "$HOME/.local/bin" ]] && [[ ":$PATH:" == *":$HOME/.local/bin:"* ]]; then
+        ln -s "$batpath" "$HOME/.local/bin/bat"
+    else
+        alias bat="$batpath"
+    fi
+elif command -v bat >/dev/null 2>&1; then
+    batpath="$(command -v bat)"
+fi
+if [[ -n "$batpath" ]]; then
+    export MANPAGER="sh -c 'awk '\''{ gsub(/\x1B\[[0-9;]*m/, \"\", \$0); gsub(/.\x08/, \"\", \$0); print }'\'' | $bat_path -p -lman'"
 fi
 alias bless='bat --plain --pager="less --RAW-CONTROL-CHARS"'
 
