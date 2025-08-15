@@ -47,7 +47,7 @@ elif command -v bat >/dev/null 2>&1; then
     batpath="$(command -v bat)"
 fi
 if [[ -n "$batpath" ]]; then
-    export MANPAGER="sh -c 'awk '\''{ gsub(/\x1B\[[0-9;]*m/, \"\", \$0); gsub(/.\x08/, \"\", \$0); print }'\'' | $bat_path -p -lman'"
+    export MANPAGER="sh -c 'awk '\''{ gsub(/\x1B\[[0-9;]*m/, \"\", \$0); gsub(/.\x08/, \"\", \$0); print }'\'' | $batpath -p -lman'"
 fi
 alias bless='bat --plain --pager="less --RAW-CONTROL-CHARS"'
 
