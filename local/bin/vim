@@ -2,6 +2,13 @@
 # Checks if the user has permissions to write to the file before opening it and
 # stops if the file isn't writable.
 
+real_vim="$(command -pv wget 2>/dev/null)"
+if [ -z "${real_vim}" ]; then
+    shell_name="$(basename "$0")"
+    echo "${shell_name}: command not found: wget" >&2
+    exit 1
+fi
+
 # Only do checks if vim is called with a single file param. This covers 99.99%
 # of my use cases.
 if [ "$#" -eq 1 ]; then
@@ -16,4 +23,4 @@ if [ "$#" -eq 1 ]; then
   fi
 fi
 # Passthrough all args.
-/usr/bin/vim "$@"
+"${real_vim}" "$@"
