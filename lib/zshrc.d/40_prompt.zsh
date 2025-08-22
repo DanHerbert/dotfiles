@@ -1,9 +1,9 @@
 #!/usr/bin/zsh
 # Prompt colors follow the spirit of Debian's default prompt guidance: Prompt
 # should not distract the user. Focus should be on the output of commands, not
-# the prompt. For me, that means using a dimmed color palete that deemphasizes
+# the prompt. For me, that means using a dimmed color palette that deemphasizes
 # the prompt data, but still has a touch of color to make it readable at a
-# glance. See https://sources.debian.org/src/bash/4.3-11/debian/skel.bashrc/#L43
+# glance. See https://sources.debian.org/src/bash/5.2.37-2/debian/skel.bashrc#L43
 
 # For documentation of zsh prompt expansion sequences, see:
 # https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
