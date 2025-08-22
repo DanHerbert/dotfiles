@@ -19,9 +19,13 @@ fi
 # A surprising amount of modern apps misbehave without this specific value.
 export TERM='xterm-256color'
 
+starting_path=":$PATH:"
+vimwrapper="$HOME/.local/bin/vim"
+modified_path="${starting_path/:$vimwrapper:/:}"
+real_vim="$(PATH="$modified_path" command -v vim 2>/dev/null)"
 # This is the "simplest" way to get this that I've been able to find...
 # https://stackoverflow.com/a/43704557
-export VIMRUNTIME=$(/usr/bin/vim -e -T dumb --cmd 'exe "set t_cm=\<C-M>"|echo $VIMRUNTIME|q' 2>&1 | tr -d '\015' | sed -E 's/(\s|\n|\r)+$//g')
+export VIMRUNTIME=$("$real_vim" -e -T dumb --cmd 'exe "set t_cm=\<C-M>"|echo $VIMRUNTIME|q' 2>&1 | tr -d '\015' | sed -E 's/(\s|\n|\r)+$//g')
 
 if [[ -d "$HOME/.local/lib/bc.d" ]]; then
     for file in "$HOME"/.local/lib/bc.d/*.bc; do
@@ -39,3 +43,21 @@ SSH_TMUX_CMD="/usr/bin/systemd-run --user -E SSH_CLIENT=\"\$SSH_CLIENT\" -E SSH_
 ZSH_COMMAND_TIME_COLOR="250"  # Gray
 ZSH_COMMAND_TIME_EXCLUDE=(vim journalctl tig less "tail -f" "dmesg -w" "dmesg -W")
 ZSH_COMMAND_TIME_MSG="[%%*] Runtime: %s"
+
+if command -v brew 2>&1 >/dev/null; then
+    HOMEBREW_BIN=$(command -v brew)
+elif [ -x "/usr/local/bin/brew" ]; then
+    HOMEBREW_BIN="/usr/local/bin/brew"
+elif [ -x "/opt/homebrew/bin/brew" ]; then
+    HOMEBREW_BIN="/opt/homebrew/bin/brew"
+fi
+
+if [ -n "$HOMEBREW_BIN" ]; then
+    HOMEBREW_PREFIX=$("$HOMEBREW_BIN" --prefix)
+    HOMEBREW_CELLAR=$("$HOMEBREW_BIN" --cellar)
+    HOMEBREW_REPOSITORY=$("$HOMEBREW_BIN" --repository)
+    if [ -d "${HOMEBREW_PREFIX}/opt/binutils" ]; then
+        export LDFLAGS="-L${HOMEBREW_PREFIX}/opt/binutils/lib"
+        export CPPFLAGS="-I${HOMEBREW_PREFIX}/opt/binutils/include"
+    fi
+fi

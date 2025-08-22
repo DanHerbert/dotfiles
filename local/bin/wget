@@ -3,7 +3,10 @@
 # location. This could get called by other scripts, so it is intentionally
 # overcautious about every variable and executable which may get used.
 
-real_wget="$(command -pv wget 2>/dev/null)"
+SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
+starting_path=":$PATH:"
+modified_path="$(echo "$starting_path" | sed "s|:$SCRIPT_DIR:|:|")"
+real_wget="$(PATH="$modified_path" command -v wget 2>/dev/null)"
 if [ -z "${real_wget}" ]; then
     shell_name="$(basename "${SHELL}")"
     prefix="$(test -n "${shell_name}" && echo "${shell_name}: ")"

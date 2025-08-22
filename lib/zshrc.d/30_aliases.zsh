@@ -12,9 +12,13 @@ alias   ....='cd ../../..'
 alias  .....='cd ../../../..'
 alias ......='cd ../../../../..'
 
-alias sctl='systemctl'
-alias uctl='systemctl --user'
-alias jctl='journalctl -o short-iso --no-hostname'
+if command -v systemctl 2>&1 >/dev/null; then
+    alias sctl='systemctl'
+    alias uctl='systemctl --user'
+fi
+if command -v journalctl 2>&1 >/dev/null; then
+    alias jctl='journalctl -o short-iso --no-hostname'
+fi
 
 # Environment variable LS_COLORS must also exist for this to work.
 alias ls='ls --color=auto --group-directories-first -p'
@@ -26,7 +30,7 @@ alias mv='mv -i'
 # Force diff to use color by default.
 alias diff='diff --color'
 
-alias ytd='/usr/bin/yt-dlp'
+alias ytd="$(command -v yt-dlp 2>/dev/null)"
 
 alias dateutc='date -u +%Y-%m-%dT%H:%M:%S%z'
 
@@ -49,7 +53,7 @@ fi
 if [[ -n "$batpath" ]]; then
     export MANPAGER="sh -c 'awk '\''{ gsub(/\x1B\[[0-9;]*m/, \"\", \$0); gsub(/.\x08/, \"\", \$0); print }'\'' | $batpath -p -lman'"
 fi
-alias bless='bat --plain --pager="less --RAW-CONTROL-CHARS"'
+alias lessc='bat --plain --pager="less --RAW-CONTROL-CHARS"'
 
 # --verbose Output all details for potential debugging
 # --update Only copy the things that need it
@@ -59,7 +63,7 @@ alias bless='bat --plain --pager="less --RAW-CONTROL-CHARS"'
 alias rsync='rsync --verbose --update --partial --info=flist2,progress2 --human-readable'
 
 # zsh seems to automatically map completions of this to git, but bash does not.
-alias g='/usr/bin/git'
+alias g="$(command -v git 2>/dev/null)"
 
 alias sudo='nocorrect sudo '
 
