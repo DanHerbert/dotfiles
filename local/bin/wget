@@ -4,6 +4,8 @@
 # overcautious about every variable and executable which may get used.
 
 SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
+SCRIPT_OWNER=$(stat -c "%U" "$SCRIPT_DIR")
+
 starting_path=":$PATH:"
 modified_path="$(echo "$starting_path" | sed "s|:$SCRIPT_DIR:|:|")"
 real_wget="$(PATH="$modified_path" command -v wget 2>/dev/null)"
@@ -13,7 +15,7 @@ if [ -z "${real_wget}" ]; then
     echo "${prefix}command not found: wget" >&2
     exit 1
 fi
-HOME="${HOME:-/home/${USER:-dan}}"
+HOME="${HOME:-$(eval echo "~${USER:-$SCRIPT_OWNER}")}"
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
 if [ ! -e "${XDG_CONFIG_HOME}/wget/wget-hsts.txt" ]; then
     mkdir -p "${XDG_CONFIG_HOME}/wget"
