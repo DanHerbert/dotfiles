@@ -1,9 +1,9 @@
 #!/bin/bash
+shopt -s extglob
+
 set -x
+
 primary_group=$(id -gn "$USER")
-sudo chown "$USER":"$primary_group" "$HOME"/.ssh/id_*
-sudo chown "$USER":"$primary_group" "$HOME"/.ssh/keys/*
-sudo chmod 600 "$HOME"/.ssh/id_*
-sudo chmod 644 "$HOME"/.ssh/id_*.pub
-sudo chmod 600 "$HOME"/.ssh/keys/*
-sudo chmod 644 "$HOME"/.ssh/keys/*.pub
+sudo chown "$USER":"$primary_group" "$HOME"/{.ssh,.ssh/keys}/id_*
+sudo chmod 600 "$HOME"/{.ssh,.ssh/keys}/id_!(*\.pub)
+sudo chmod 644 "$HOME"/{.ssh,.ssh/keys}/id_*.pub
