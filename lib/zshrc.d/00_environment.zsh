@@ -40,8 +40,9 @@ fi
 # without any shell RC hacks.
 SSH_TMUX_CMD="/usr/bin/systemd-run --user -E SSH_CLIENT=\"\$SSH_CLIENT\" -E SSH_CONNECTION=\"\$SSH_CONNECTION\" -E SSH_TTY=\"\$SSH_TTY\" --pty --same-dir --wait --collect --service-type=exec /usr/bin/dash -c '/usr/bin/systemd-run --scope --user /usr/bin/tmux new -As work 2>/dev/null' 2> /dev/null"
 
+typeset -F SECONDS  # Use floating point numbers for command time.
 ZSH_COMMAND_TIME_COLOR="250"  # Gray
-ZSH_COMMAND_TIME_EXCLUDE=(vim journalctl tig less man "tail -f" "dmesg -w" "dmesg -W")
+ZSH_COMMAND_TIME_EXCLUDE=(vim journalctl jctl tig less lessc lessv man info "git commit" "g commit" "git cm" "g cm" "git help" "g help" "tail -f" "dmesg -w" "dmesg -W")
 ZSH_COMMAND_TIME_MSG="[%%*] Runtime: %s"
 
 if command -v brew 2>&1 >/dev/null; then

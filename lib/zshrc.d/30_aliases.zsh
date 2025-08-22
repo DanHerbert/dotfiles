@@ -34,8 +34,6 @@ alias ytd="$(command -v yt-dlp 2>/dev/null)"
 
 alias dateutc='date -u +%Y-%m-%dT%H:%M:%S%z'
 
-alias vless="$VIMRUNTIME/macros/less.sh"
-
 alias code="$HOME/.local/bin/codium"
 
 alias py3='python3'
@@ -54,6 +52,8 @@ if [[ -n "$batpath" ]]; then
     export MANPAGER="sh -c 'awk '\''{ gsub(/\x1B\[[0-9;]*m/, \"\", \$0); gsub(/.\x08/, \"\", \$0); print }'\'' | $batpath -p -lman'"
 fi
 alias lessc='bat --plain --pager="less --RAW-CONTROL-CHARS"'
+
+alias lessv="$VIMRUNTIME/macros/less.sh"
 
 # --verbose Output all details for potential debugging
 # --update Only copy the things that need it

@@ -13,3 +13,6 @@
 [submodule "config/cheat/cheatsheets/community"]
 	path = config/cheat/cheatsheets/community
 	url = https://github.com/cheat/cheatsheets.git
+[submodule "lib/plugins/zsh-command-time"]
+	path = lib/plugins/zsh-command-time
+	url = https://github.com/popstas/zsh-command-time.git
