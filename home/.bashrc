@@ -8,7 +8,14 @@
 # intentionally happens even in a non-interactive shell.
 if [[ -d "$HOME"/.config/environment.d/ ]] && [[ -z $XDG_CONFIG_HOME ]]; then
     for conf in "$HOME"/.config/environment.d/*.conf; do
-        set -a; source <(grep -vE '^#' "$conf"); set +a;
+        if [[ -L "$conf" ]] && [[ -e "$conf" ]]; then
+            set -a;
+            # shellcheck source=/dev/null
+            source <(grep -vE '^#' "$conf");
+            set +a;
+        else
+            echo "WARNING: environment conf symlink is broken [$conf]" >&2
+        fi
     done
 fi
 
@@ -18,10 +25,9 @@ case $- in
       *) return;;
 esac
 
-[[ $DISPLAY ]] && shopt -s checkwinsize
-
 if command -v shopt > /dev/null 2>&1; then
     shopt -s histappend
+    [[ -n $DISPLAY ]] && shopt -s checkwinsize
 fi
 
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"

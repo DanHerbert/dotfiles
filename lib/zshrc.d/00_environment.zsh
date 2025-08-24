@@ -8,7 +8,11 @@
 # has not loaded ~/.config/environment.d/ which my dotfiles depend on.
 if [[ -z $XDG_CONFIG_HOME ]]; then
     for conf in "$HOME"/.config/environment.d/*.conf; do
-        set -a; source <(grep -vE '^#' "$conf"); set +a;
+        if [[ -L "$conf" ]] && [[ -e "$conf" ]]; then
+            set -a; source <(grep -vE '^#' "$conf"); set +a;
+        else
+            echo "WARNING: environment conf symlink is broken [$conf]" >&2
+        fi
     done
 fi
 
@@ -42,7 +46,7 @@ SSH_TMUX_CMD="/usr/bin/systemd-run --user -E SSH_CLIENT=\"\$SSH_CLIENT\" -E SSH_
 
 typeset -F SECONDS  # Use floating point numbers for command time.
 ZSH_COMMAND_TIME_COLOR="250"  # Gray
-ZSH_COMMAND_TIME_EXCLUDE=(vim journalctl jctl tig less lessc lessv man info "git commit" "g commit" "git cm" "g cm" "git help" "g help" "tail -f" "dmesg -w" "dmesg -W")
+ZSH_COMMAND_TIME_EXCLUDE=(vim visudo journalctl jctl tig less lessc lessv man info "git commit" "g commit" "git cm" "g cm" "git help" "g help" "tail -f" "dmesg -w" "dmesg -W")
 ZSH_COMMAND_TIME_MSG="[%%*] Runtime: %s"
 
 if command -v brew 2>&1 >/dev/null; then
