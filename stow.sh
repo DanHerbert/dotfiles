@@ -27,7 +27,12 @@ if ! command -v stow >/dev/null 2>&1; then
     return 1
 fi
 
-uninitialized_submodules="$(git submodule status | grep -cE '^-')"
+if ! command -v bc >/dev/null 2>&1; then
+    echo 'GNU bc is not installed. All package managers call this "bc".'
+    return 1
+fi
+
+uninitialized_submodules="$(cd "$PROJECT_ROOT"; git submodule status | grep -cE '^-')"
 if [ "$uninitialized_submodules" -gt 0 ]; then
     echo 'dotfiles repo has uninitialized submodules.'
     echo 'Fix this by running "git submodule update --init --recursive"'
@@ -75,10 +80,13 @@ sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME/.local" local
 sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME" home
 )
 
+cleanup_start="$(date +%s.%N)"
 # The pruned directory option lines below are technically not required, but will
 # speed up this command quite a bit if the lines included.
 has_shown_header=0
 find "$U_HOME" \
+        -path "$PROJECT_ROOT" -type d -prune -o \
+        -path "$U_HOME/code" -type d -prune -o \
         -path "$U_HOME/Downloads" -type d -prune -o \
         -path "$U_HOME/Documents" -type d -prune -o \
         -path "$U_HOME/Desktop" -type d -prune -o \
@@ -108,6 +116,18 @@ find "$U_HOME" \
             ;;
     esac
 done
+cleanup_stop="$(date +%s.%N)"
+cleanup_total=$(echo "$cleanup_stop - $cleanup_start" | bc)
+cleanup_days=$(echo "$cleanup_total/86400" | bc)
+cleanup_total=$(echo "$cleanup_total-86400*$cleanup_days" | bc)
+cleanup_hours=$(echo "$cleanup_total/3600" | bc)
+cleanup_total=$(echo "$cleanup_total-3600*$cleanup_hours" | bc)
+cleanup_minutes=$(echo "$cleanup_total/60" | bc)
+cleanup_total=$(echo "$cleanup_total-60*$cleanup_minutes" | bc)
+cleanup_seconds=$(echo "$cleanup_total-60*$cleanup_minutes" | bc)
+printf "Cleanup runtime: %07.4f\n" "$cleanup_seconds"
+# printf "Cleanup runtime: %d:%02d:%02d:%07.4f\n" \
+#     "$cleanup_days" "$cleanup_hours" "$cleanup_minutes" "$cleanup_seconds"
 
 ) # End outermost subshell
 
