@@ -48,7 +48,7 @@ unset uninitialized_submodules
 PROJECT_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 P_USER=$(stat -c "%U" "$PROJECT_ROOT")
 # Stow internally expects a HOME env var.
-U_HOME="$(getent passwd "$P_USER" | cut -d: -f6)"
+U_HOME="$(eval echo "~${P_USER}")"
 
 # Setup destination directories for everything in the repo. This will make it
 # easier to add machine-specific files without being tracked as part of this
@@ -72,7 +72,27 @@ fi
 ( export PS4=''; set -xe
 sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME/.config" config
 sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME/.local" local
-sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME" home)
+sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME" home
+)
+
+has_shown_header=0
+find "$U_HOME" -type l 2>/dev/null | while read -r symlink ; do
+    true_path=$(realpath -q "$symlink")
+    case $true_path in
+        "$PROJECT_ROOT"*)
+            if [ -L "$symlink" ] && [ ! -e "$true_path" ]; then
+                if [ $has_shown_header = 0 ]; then
+                    echo 'Cleaning up stale symlinks owned by stow.sh...'
+                    has_shown_header=1
+                fi
+                rel_target=$(printf '%s' "$symlink" | sed "s|$U_HOME|~|")
+                rel_source=$(readlink "$symlink")
+                rm "$symlink"
+                echo "UNLINK: $rel_target => $rel_source"
+            fi
+            ;;
+    esac
+done
 
 ) # End outermost subshell
 
