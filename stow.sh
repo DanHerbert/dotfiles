@@ -75,14 +75,25 @@ sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME/.local" local
 sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME" home
 )
 
+# The pruned directory option lines below are technically not required, but will
+# speed up this command quite a bit if the lines included.
 has_shown_header=0
-find "$U_HOME" -type l 2>/dev/null | while read -r symlink ; do
-    true_path=$(realpath -q "$symlink")
+find "$U_HOME" \
+        -path "$U_HOME/Downloads" -type d -prune -o \
+        -path "$U_HOME/Documents" -type d -prune -o \
+        -path "$U_HOME/Desktop" -type d -prune -o \
+        -path "$U_HOME/Music" -type d -prune -o \
+        -path "$U_HOME/Pictures" -type d -prune -o \
+        -path "$U_HOME/Videos" -type d -prune -o \
+        -path "$U_HOME/Public" -type d -prune -o \
+        -path "$U_HOME/.local/share/Steam" -type d -prune -o \
+        -type l -print 2>/dev/null | while read -r symlink; do
+    true_path=$(realpath -q "$symlink" || true)
     case $true_path in
         "$PROJECT_ROOT"*)
             if [ -L "$symlink" ] && [ ! -e "$true_path" ]; then
                 if [ $has_shown_header = 0 ]; then
-                    echo 'Cleaning up stale symlinks owned by stow.sh...'
+                    echo 'Cleaning up broken symlinks owned by stow.sh ...'
                     has_shown_header=1
                 fi
                 rel_target=$(printf '%s' "$symlink" | sed "s|$U_HOME|~|")
