@@ -40,18 +40,15 @@ alias py3='python3'
 
 if ! command -v bat >/dev/null 2>&1 && command -v batcat >/dev/null 2>&1; then
     batpath="$(command -v batcat)"
-    if [[ -d "$HOME/.local/bin" ]] && [[ ":$PATH:" == *":$HOME/.local/bin:"* ]]; then
-        ln -s "$batpath" "$HOME/.local/bin/bat"
-    else
-        alias bat="$batpath"
-    fi
+    alias bat="$batpath"
 elif command -v bat >/dev/null 2>&1; then
     batpath="$(command -v bat)"
 fi
 if [[ -n "$batpath" ]]; then
     export MANPAGER="sh -c 'awk '\''{ gsub(/\x1B\[[0-9;]*m/, \"\", \$0); gsub(/.\x08/, \"\", \$0); print }'\'' | $batpath -p -lman'"
 fi
-alias lessc='bat --plain --pager="less --RAW-CONTROL-CHARS"'
+lesspath="$(command -v less)"
+alias lessc="$batpath --plain --pager=\"$lesspath --RAW-CONTROL-CHARS\""
 
 alias lessv="$VIMRUNTIME/macros/less.sh"
 
