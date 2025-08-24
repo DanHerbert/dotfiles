@@ -86,6 +86,10 @@ find "$U_HOME" \
         -path "$U_HOME/Pictures" -type d -prune -o \
         -path "$U_HOME/Videos" -type d -prune -o \
         -path "$U_HOME/Public" -type d -prune -o \
+        -path "$U_HOME/.cache" -type d -prune -o \
+        -path "$U_HOME/.local/state/cargo" -type d -prune -o \
+        -path "$U_HOME/.local/state/rustup" -type d -prune -o \
+        -path "$U_HOME/.local/state/golang" -type d -prune -o \
         -path "$U_HOME/.local/share/Steam" -type d -prune -o \
         -type l -print 2>/dev/null | while read -r symlink; do
     true_path=$(realpath -q "$symlink" || true)
