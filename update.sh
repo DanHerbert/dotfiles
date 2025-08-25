@@ -5,12 +5,19 @@
 # loads into memory before executing.
 {
     PROJECT_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
+    OWNER=$(stat -c "%U" "$PROJECT_ROOT")
+    # Wrapper that ensures all git operations run as the correct user, while
+    # also ensuring the correct SSH mode for any remote operations.
+    u_git() {
+        git_args="$*"
+        sudo -u "$OWNER" sh -c "GIT_SSH_COMMAND='ssh -o BatchMode=yes'; git $git_args"
+    }
 
     set -e
 
     cd "$PROJECT_ROOT" || exit 1
 
-    current_branch="$(git branch --show-current)"
+    current_branch="$(u_git branch --show-current)"
     git_failed=$?
     if [ "$git_failed" != 0 ]; then
         echo "Bad git ownership detected. Doing nothing."
@@ -19,37 +26,36 @@
         echo 'Script user'
         id -u -n
         echo 'Current safe directories'
-        git --no-pager config --show-origin --get-all safe.directory
+        u_git --no-pager config --show-origin --get-all safe.directory
         exit 1
     fi
     if [ "$current_branch" != 'main' ]; then
         echo 'On a non-default branch. Doing nothing.'
         exit
     fi
-    OWNER=$(stat -c "%U" "$PROJECT_ROOT")
-    GROUP=$(stat -c "%G" "$PROJECT_ROOT")
-    old_version=$(git rev-parse HEAD)
-    old_submodule_version=$(git submodule status --recursive | sha1sum | awk '{ print $1 }')
-    has_stash=false
-    if [ "$(git status --porcelain | wc -l)" -gt 0 ]; then
-        has_stash=true
-        git stash --include-untracked
+    if ! u_git ls-remote >/dev/null 2>&1; then
+        echo 'Unable to connect to github.com to perform operations. Aborting...'
+        exit 1
     fi
-    GIT_SSH_COMMAND="ssh -o BatchMode=yes" git pull --force --recurse-submodules
-    GIT_SSH_COMMAND="ssh -o BatchMode=yes" git submodule update --init --recursive
-    # When this update happens through systemd (root), ownership can get wonky.
-    chown -R "$OWNER":"$GROUP" "$PROJECT_ROOT"
+    old_version=$(u_git rev-parse HEAD)
+    old_submodule_version=$(u_git submodule status --recursive | sha1sum | awk '{ print $1 }')
+    has_stash=false
+    if [ "$(u_git status --porcelain | wc -l)" -gt 0 ]; then
+        has_stash=true
+        u_git stash --include-untracked
+    fi
+    u_git pull --force --recurse-submodules
+    u_git submodule update --init --recursive
 
-    new_version=$(git rev-parse HEAD)
-    new_submodule_version=$(git submodule status --recursive | sha1sum | awk '{ print $1 }')
+    new_version=$(u_git rev-parse HEAD)
+    new_submodule_version=$(u_git submodule status --recursive | sha1sum | awk '{ print $1 }')
     if $has_stash; then
-        git stash pop
+        u_git stash pop
     fi
     if [ "$new_version" != "$old_version" ] || [ "$old_submodule_version" != "$new_submodule_version" ]; then
         # Stow expects to be sourced, but that is not needed inside update.sh
-        INSIDE_UPDATE_SCRIPT=1
-        export INSIDE_UPDATE_SCRIPT
-        "$PROJECT_ROOT/stow.sh"
+        # and can make things behave strangely if we do source the script.
+        sudo -u "$OWNER" sh -c 'INSIDE_UPDATE_SCRIPT=1; export INSIDE_UPDATE_SCRIPT; "$PROJECT_ROOT/stow.sh"'
     fi
 }
 exit
