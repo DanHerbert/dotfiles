@@ -34,7 +34,7 @@ alias ytd="$(command -v yt-dlp 2>/dev/null)"
 
 alias dateutc='date -u +%Y-%m-%dT%H:%M:%S%z'
 
-alias code="$HOME/.local/bin/codium"
+alias code="codium 2> >(mkdir -p $XDG_STATE_HOME/codium; ts '[%Y-%m-%dT%H:%M:%S]' >> $XDG_STATE_HOME/codium/errors.log)"
 
 alias py3='python3'
 
