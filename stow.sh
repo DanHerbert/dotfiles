@@ -95,9 +95,9 @@ timer_start
 # easier to add machine-specific files without being tracked as part of this
 # dotfiles repo. vim needs extra depth to ensure that the plugins directory is a
 # real directory and not a symlink, hence the difference in home/
-(cd home && find . -maxdepth 4 -type d -exec sudo -u "$P_USER" mkdir -vp "$U_HOME/{}" \;)
-(cd local && find . -maxdepth 2 -type d -exec sudo -u "$P_USER" mkdir -vp "$U_HOME/.local/{}" \;)
-(cd config && find . -maxdepth 2 -type d -exec sudo -u "$P_USER" mkdir -vp "$U_HOME/.config/{}" \;)
+(cd home && sudo -u "$P_USER" find . -maxdepth 4 -type d -exec mkdir -vp "$U_HOME/{}" \;)
+(cd local && sudo -u "$P_USER" find . -maxdepth 2 -type d -exec mkdir -vp "$U_HOME/.local/{}" \;)
+(cd config && sudo -u "$P_USER" find . -maxdepth 2 -type d -exec mkdir -vp "$U_HOME/.config/{}" \;)
 echo 'Placeholder directories for stow targets have been created, if needed.'
 timer_stop "mkdirs"
 
