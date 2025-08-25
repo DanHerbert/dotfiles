@@ -32,14 +32,51 @@ if ! command -v bc >/dev/null 2>&1; then
     return 1
 fi
 
+timer_start() {
+    __timer_starttime="$(date +%s.%N)"
+    export __timer_starttime
+}
+
+timer_stop() {
+    label_prefix="${1:-Segment}"
+    stoptime="$(date +%s.%N)"
+    total_runtime=$(echo "$stoptime - $__timer_starttime" | bc)
+    runtime_days=$(echo "$total_runtime/86400" | bc)
+    total_runtime=$(echo "$total_runtime-86400*$runtime_days" | bc)
+    runtime_hours=$(echo "$total_runtime/3600" | bc)
+    total_runtime=$(echo "$total_runtime-3600*$runtime_hours" | bc)
+    runtime_minutes=$(echo "$total_runtime/60" | bc)
+    total_runtime=$(echo "$total_runtime-60*$runtime_minutes" | bc)
+    runtime_seconds=$(echo "$total_runtime-60*$runtime_minutes" | bc)
+    printf "$label_prefix runtime: %07.4f\n" "$runtime_seconds"
+    # printf "%s runtime: %d:%02d:%02d:%07.4f\n" "$label_prefix" \
+    #     "$runtime_days" "$runtime_hours" "$runtime_minutes" "$runtime_seconds"
+    unset __timer_starttime
+    unset label_prefix
+    unset stoptime
+    unset total_runtime
+    unset runtime_days
+    unset runtime_hours
+    unset runtime_minutes
+    unset runtime_seconds
+}
+
+PROJECT_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
+
+timer_start
 uninitialized_submodules="$(cd "$PROJECT_ROOT"; git submodule status | grep -cE '^-')"
 if [ "$uninitialized_submodules" -gt 0 ]; then
+    timer_stop 'submodule check'
     echo 'dotfiles repo has uninitialized submodules.'
     echo 'Fix this by running "git submodule update --init --recursive"'
     unset uninitialized_submodules
+    unset timer_start
+    unset timer_stop
+    unset PROJECT_ROOT
     return 1
 fi
 unset uninitialized_submodules
+timer_stop 'submodule check'
 
 # Because this script must be sourced, the set -e flag would kill the entire
 # terminal if this script has an error. Running in a subshell prevents that from
@@ -50,11 +87,10 @@ unset uninitialized_submodules
 # Within the non-login shell triggered through a git hook via a python service
 # the usual $HOME doesn't exist. It also will not point to the correct home
 # since this same situation also means the current user would always be root.
-PROJECT_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 P_USER=$(stat -c "%U" "$PROJECT_ROOT")
 # Stow internally expects a HOME env var.
 U_HOME="$(eval echo "~${P_USER}")"
-
+timer_start
 # Setup destination directories for everything in the repo. This will make it
 # easier to add machine-specific files without being tracked as part of this
 # dotfiles repo. vim needs extra depth to ensure that the plugins directory is a
@@ -63,6 +99,7 @@ U_HOME="$(eval echo "~${P_USER}")"
 (cd local && find . -maxdepth 2 -type d -exec sudo -u "$P_USER" mkdir -vp "$U_HOME/.local/{}" \;)
 (cd config && find . -maxdepth 2 -type d -exec sudo -u "$P_USER" mkdir -vp "$U_HOME/.config/{}" \;)
 echo 'Placeholder directories for stow targets have been created, if needed.'
+timer_stop "mkdirs"
 
 # Not all contexts will automatically load ~/.config/environment.d/ configs
 # Creating this file ensures environment variables always get loaded within
@@ -74,17 +111,19 @@ if [ -z "$XDG_CONFIG_HOME" ] && [ ! -f "$U_HOME/.zshenv" ]; then
     echo "Created [$U_HOME/.zshenv] to ensure ZSH runs correctly."
 fi
 
+timer_start
 ( export PS4=''; set -xe
 sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME/.config" config
 sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME/.local" local
 sudo -u "$P_USER" stow --verbose=1 --target="$U_HOME" home
 )
+timer_stop "stows"
 
-cleanup_start="$(date +%s.%N)"
+timer_start
 # The pruned directory option lines below are technically not required, but will
 # speed up this command quite a bit if the lines included.
 has_shown_header=0
-find "$U_HOME" \
+find "$U_HOME"/.* \
         -path "$PROJECT_ROOT" -type d -prune -o \
         -path "$U_HOME/code" -type d -prune -o \
         -path "$U_HOME/Downloads" -type d -prune -o \
@@ -116,19 +155,11 @@ find "$U_HOME" \
             ;;
     esac
 done
-cleanup_stop="$(date +%s.%N)"
-cleanup_total=$(echo "$cleanup_stop - $cleanup_start" | bc)
-cleanup_days=$(echo "$cleanup_total/86400" | bc)
-cleanup_total=$(echo "$cleanup_total-86400*$cleanup_days" | bc)
-cleanup_hours=$(echo "$cleanup_total/3600" | bc)
-cleanup_total=$(echo "$cleanup_total-3600*$cleanup_hours" | bc)
-cleanup_minutes=$(echo "$cleanup_total/60" | bc)
-cleanup_total=$(echo "$cleanup_total-60*$cleanup_minutes" | bc)
-cleanup_seconds=$(echo "$cleanup_total-60*$cleanup_minutes" | bc)
-printf "Cleanup runtime: %07.4f\n" "$cleanup_seconds"
-# printf "Cleanup runtime: %d:%02d:%02d:%07.4f\n" \
-#     "$cleanup_days" "$cleanup_hours" "$cleanup_minutes" "$cleanup_seconds"
+timer_stop "Cleanup"
 
 ) # End outermost subshell
+
+unset timer_start
+unset timer_stop
 
 hash -r
