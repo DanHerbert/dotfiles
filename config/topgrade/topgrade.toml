@@ -14,4 +14,4 @@ arguments = "--rebase --autostash"
 arch_package_manager = "autodetect"
 
 [pre_commands]
-"Github SSH Key Preload" = "(ssh git@github.com 2>/dev/null; sudo ssh git@github.com 2>/dev/null) || true"
+"Github SSH Key Preload" = "(ssh -T git@github.com 2>/dev/null) || true"
