@@ -55,7 +55,7 @@
     if [ "$new_version" != "$old_version" ] || [ "$old_submodule_version" != "$new_submodule_version" ]; then
         # Stow expects to be sourced, but that is not needed inside update.sh
         # and can make things behave strangely if we do source the script.
-        sudo -u "$OWNER" sh -c 'INSIDE_UPDATE_SCRIPT=1; export INSIDE_UPDATE_SCRIPT; "$PROJECT_ROOT/stow.sh"'
+        sudo -u "$OWNER" sh -c 'INSIDE_UPDATE_SCRIPT=1; export INSIDE_UPDATE_SCRIPT; '"$PROJECT_ROOT/stow.sh"
     fi
 }
 exit
