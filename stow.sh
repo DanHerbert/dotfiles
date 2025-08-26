@@ -32,15 +32,42 @@ if ! command -v bc >/dev/null 2>&1; then
     return 1
 fi
 
+if command -v gdate >/dev/null 2>&1; then
+    date() { gdate "$@"; }
+# Date on BSD-based systems (MacOS) does not have sub-second precision, which
+# this script expects to do timing stuff. This seems to be the best way to
+# detect proper support, at least for OSes that I use.
+elif ! date --version | grep -q 'GNU coreutils' >/dev/null 2>&1; then
+    if [ "$(uname -o)" = 'Darwin' ]; then
+        echo 'GNU coretutils is not installed. Install "coreutils" from Homebrew.'
+    else
+        echo 'GNU coretutils package is not installed.'
+    fi
+    return 1
+fi
+
+
 timer_start() {
-    __timer_starttime="$(date +%s.%N)"
-    export __timer_starttime
+    if [ -n "$1" ]; then
+        timer_start_var="$1"
+        starttime="$(date +%s.%N)"
+        eval export "$timer_start_var"=\$starttime
+        unset starttime
+    else
+        __timer_starttime="$(date +%s.%N)"
+        export __timer_starttime
+    fi
 }
 
 timer_stop() {
     label_prefix="${1:-Segment}"
+    starttime=$__timer_starttime
+    if [ -n "$2" ]; then
+        timer_start_var="$2"
+        starttime=$(eval "echo \"\$$timer_start_var\"")
+    fi
     stoptime="$(date +%s.%N)"
-    total_runtime=$(echo "$stoptime - $__timer_starttime" | bc)
+    total_runtime=$(echo "$stoptime - $starttime" | bc)
     runtime_days=$(echo "$total_runtime/86400" | bc)
     total_runtime=$(echo "$total_runtime-86400*$runtime_days" | bc)
     runtime_hours=$(echo "$total_runtime/3600" | bc)
@@ -48,18 +75,24 @@ timer_stop() {
     runtime_minutes=$(echo "$total_runtime/60" | bc)
     total_runtime=$(echo "$total_runtime-60*$runtime_minutes" | bc)
     runtime_seconds=$(echo "$total_runtime-60*$runtime_minutes" | bc)
-    printf "$label_prefix runtime: %07.4f\n" "$runtime_seconds"
-    # printf "%s runtime: %d:%02d:%02d:%07.4f\n" "$label_prefix" \
+    printf "++ $label_prefix runtime: %04.2fs\n" "$runtime_seconds"
+    # printf "%s runtime: %d:%02d:%02d:%06.3f\n" "$label_prefix" \
     #     "$runtime_days" "$runtime_hours" "$runtime_minutes" "$runtime_seconds"
     unset __timer_starttime
     unset label_prefix
+    unset starttime
     unset stoptime
     unset total_runtime
     unset runtime_days
     unset runtime_hours
     unset runtime_minutes
     unset runtime_seconds
+    if [ -n "$2" ]; then
+        eval "unset \"\$timer_start_var\""
+    fi
+    unset timer_start_var
 }
+timer_start '__script_runtime'
 
 PROJECT_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 
@@ -67,9 +100,11 @@ timer_start
 uninitialized_submodules="$(cd "$PROJECT_ROOT"; git submodule status | grep -cE '^-')"
 if [ "$uninitialized_submodules" -gt 0 ]; then
     timer_stop 'submodule check'
+    timer_stop "Total" '__script_runtime'
     echo 'dotfiles repo has uninitialized submodules.'
     echo 'Fix this by running "git submodule update --init --recursive"'
     unset uninitialized_submodules
+    unset date
     unset timer_start
     unset timer_stop
     unset PROJECT_ROOT
@@ -155,7 +190,7 @@ find "$U_HOME"/.* \
             ;;
     esac
 done
-timer_stop "Cleanup"
+timer_stop "cleanup"
 
 ) # End outermost subshell
 
@@ -163,3 +198,7 @@ unset timer_start
 unset timer_stop
 
 hash -r
+timer_stop "Total" '__script_runtime'
+
+unset __script_runtime
+unset date
