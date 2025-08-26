@@ -194,11 +194,10 @@ timer_stop "cleanup"
 
 ) # End outermost subshell
 
-unset timer_start
-unset timer_stop
-
 hash -r
 timer_stop "Total" '__script_runtime'
 
+unset timer_start
+unset timer_stop
 unset __script_runtime
 unset date
