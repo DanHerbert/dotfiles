@@ -16,11 +16,13 @@ lanips() {
 }
 export lanips
 
-if command -v ip 2>&1 >/dev/null; then
-    gatewayip() {
+gatewayip() {
+    if command -v ip >/dev/null 2>&1; then
         ip route | head -n1 | awk '{ print $3 }'
-    }
-fi
+    elif command -v route >/dev/null 2>&1 && [[ "$(uname -o)" -eq 'Darwin' ]] ; then
+        route -n get default | grep 'gateway:' | awk '{print $2}'
+    fi
+}
 
 wanip() {
     curl --write-out '\n' --silent 'https://ipv4.dan.herbert.io/remote_addr'

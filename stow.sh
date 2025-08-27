@@ -119,10 +119,11 @@ timer_stop 'submodule check'
 # the final `hash -r` command at the end of the script which always runs).
 (set -e
 
-# Within the non-login shell triggered through a git hook via a python service
-# the usual $HOME doesn't exist. It also will not point to the correct home
-# since this same situation also means the current user would always be root.
-P_USER=$(stat -c "%U" "$PROJECT_ROOT")
+# This script can sometimes be executed by a user different than the one who
+# actually owns the directory. Ensure all operations use the environment vars
+# that this script's owner would have. MacOS/BSD have different stat options
+# than GNU/Linux, so we fallback if the Linux version fails.
+P_USER=$(stat -c "%U" "$PROJECT_ROOT" 2>/dev/null || stat -f "%Su" "$PROJECT_ROOT")
 # Stow internally expects a HOME env var.
 U_HOME="$(eval echo "~${P_USER}")"
 timer_start

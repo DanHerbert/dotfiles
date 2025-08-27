@@ -48,10 +48,25 @@ compute_initial_prompt() {
     fi
 
     local system_parts
-    if [[ $(id -u) -ne 1000 ]]; then
-        system_parts=$user_style'%n%{%b%f%k%}'
-        psvar[1]+="$(id -un)"
+    local primary_uid=-1
+    if [[ -f '/etc/login.defs' ]]; then
+        primary_uid=$(grep -m 1 UID_MIN /etc/login.defs | cut -d ' ' -f 2)
+    # MacOS and BSD systems don't use the same login conventions that linux does
+    # so we need to resort to different methods to figure out if we're currently
+    # logged in as the primary system user.
+    elif command -v dscl >/dev/null 2>&1; then
+        primary_uid="$(id -u $(dscl . list /Users | grep -v '^_' | xargs  -I % sh -c '[ -d /Users/% ] && echo %'))"
+        if [[ $(id -u) -ne $primary_uid ]]; then
+            system_parts=$user_style'%n%{%b%f%k%}'
+            psvar[1]+="$(id -un)"
+        fi
     fi
+    # Only show the user name in the prompt if not currently signed in as the
+    # primary (first) user on the system.
+    if [[ $(id -u) -ne $primary_uid ]]; then
+            system_parts=$user_style'%n%{%b%f%k%}'
+            psvar[1]+="$(id -un)"
+        fi
     if [[ -n $SSH_CLIENT ]]; then
         if [[ -n $system_parts ]]; then
             system_parts+='%{%F{60}%}@%{%f%}'
