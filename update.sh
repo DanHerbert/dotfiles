@@ -9,8 +9,7 @@
     # Wrapper that ensures all git operations run as the correct user, while
     # also ensuring the correct SSH mode for any remote operations.
     u_git() {
-        git_args="$*"
-        sudo -u "$OWNER" sh -c "GIT_SSH_COMMAND='ssh -o BatchMode=yes'; git $git_args"
+        GIT_SSH_COMMAND='ssh -o BatchMode=yes'; git "$@"
     }
 
     set -e
@@ -55,7 +54,7 @@
     if [ "$new_version" != "$old_version" ] || [ "$old_submodule_version" != "$new_submodule_version" ]; then
         # Stow expects to be sourced, but that is not needed inside update.sh
         # and can make things behave strangely if we do source the script.
-        sudo -u "$OWNER" sh -c 'INSIDE_UPDATE_SCRIPT=1; export INSIDE_UPDATE_SCRIPT; '"$PROJECT_ROOT/stow.sh"
+        INSIDE_UPDATE_SCRIPT=1 "$PROJECT_ROOT/stow.sh"
     fi
 }
 exit
