@@ -5,11 +5,10 @@
 # loads into memory before executing.
 {
     PROJECT_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
-    OWNER=$(stat -c "%U" "$PROJECT_ROOT" 2>/dev/null || stat -f "%Su" "$PROJECT_ROOT")
     # Wrapper that ensures all git operations run as the correct user, while
     # also ensuring the correct SSH mode for any remote operations.
     u_git() {
-        GIT_SSH_COMMAND='ssh -o BatchMode=yes'; git "$@"
+        GIT_SSH_COMMAND='ssh -o BatchMode=yes' git "$@"
     }
 
     set -e
