@@ -4,6 +4,7 @@ disk_usage=
 adjusted_load_avg=
 shown_load_type=
 ram_usage=
+INFO_BLUE='colour33'
 WARNING_ORANGE='colour166'
 WARNING_RED='colour160'
 NORMAL_GREY='colour237'
@@ -79,7 +80,20 @@ if [[ -e /var/run/reboot-required ]]; then
     status_fg=$TEXT_WHITE
     status_bg=$WARNING_RED
     prepend_state "REBOOT"
+elif [[ "$(systemctl show --value --property=SystemState)" != 'running' ]]; then
+    status_fg=$TEXT_WHITE
+    status_bg=$WARNING_RED
+    prepend_state "System degraded"
+elif [[ "$(systemctl --user show --value --property=SystemState)" != 'running' ]]; then
+    status_fg=$TEXT_WHITE
+    status_bg=$WARNING_RED
+    prepend_state "User system degraded"
 else
+    if mail -e; then
+        status_fg=$TEXT_WHITE
+        status_bg=$INFO_BLUE
+        prepend_state "New mail!"
+    fi
     if is_cpu_load_high; then
         status_fg=$TEXT_WHITE
         status_bg=$WARNING_ORANGE
