@@ -49,6 +49,23 @@ is_ram_use_high() {
     test "$ram_usage" -gt 70
 }
 
+is_user_state_ok() {
+    local user_names
+    local user_system_state
+    if ! command -v loginctl >/dev/null 2>&1 || ! command -v systemctl >/dev/null 2>&1; then
+        return 0
+    fi
+    mapfile -t user_names < <(loginctl list-users | tail -n+2 | head -n-2 | grep 'yes' | awk '{ print $2 }')
+    for uname in "${user_names[@]}"; do
+        user_system_state="$(sudo --non-interactive systemctl --machine="$uname"@ --user show --value --property=SystemState)"
+        if [[ "$user_system_state" != 'running' ]]; then
+            export failed_user_name="$uname"
+            return 1
+        fi
+    done;
+    return 0
+}
+
 prepend_state() {
     local state_to_prepend="$1"
     if [[ "${status_right:0:1}" != '║' ]]; then
@@ -80,19 +97,25 @@ if [[ -e /var/run/reboot-required ]]; then
     status_fg=$TEXT_WHITE
     status_bg=$WARNING_RED
     prepend_state "REBOOT"
-elif [[ "$(systemctl show --value --property=SystemState)" != 'running' ]]; then
+elif command -v systemctl >/dev/null 2>&1 &&
+        [[ "$(systemctl show --value --property=SystemState)" != 'running' ]]; then
     status_fg=$TEXT_WHITE
     status_bg=$WARNING_RED
     prepend_state "System degraded"
-elif [[ "$(systemctl --user show --value --property=SystemState)" != 'running' ]]; then
+elif ! is_user_state_ok; then
     status_fg=$TEXT_WHITE
     status_bg=$WARNING_RED
-    prepend_state "User system degraded"
+    prepend_state "User $failed_user_name degraded"
 else
-    if mail -e; then
+    if command -v mail >/dev/null 2>&1 && mail -e >/dev/null 2>&1; then
         status_fg=$TEXT_WHITE
         status_bg=$INFO_BLUE
         prepend_state "New mail!"
+    fi
+    if command -v mail >/dev/null 2>&1 && sudo --non-interactive mail -e >/dev/null 2>&1; then
+        status_fg=$TEXT_WHITE
+        status_bg=$INFO_BLUE
+        prepend_state "New mail for root!"
     fi
     if is_cpu_load_high; then
         status_fg=$TEXT_WHITE
