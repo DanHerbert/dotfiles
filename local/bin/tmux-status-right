@@ -23,7 +23,7 @@ is_cpu_load_high() {
     recent_load_avg=$(echo "( ${recent_load_avg} / ${performance_cores} )" | bc -l | xargs printf "%.2f")
     long_load_avg=$(awk '{ print $3 }' /proc/loadavg) # 15 minute load average
     long_load_avg=$(echo "( ${long_load_avg} / ${performance_cores} )" | bc -l | xargs printf "%.2f")
-    if (( $(echo "$recent_load_avg > $long_load_avg" |bc -l) )); then
+    if (($(echo "$recent_load_avg > $long_load_avg" | bc -l))); then
         adjusted_load_avg=$recent_load_avg
         shown_load_type='1m'
         test "$(echo "$recent_load_avg > 0.7" | bc -l)" = 1
@@ -43,9 +43,9 @@ is_disk_filling() {
 is_ram_use_high() {
     local used
     local total
-    used=$(free -m |   awk '{if (NR==2) {{print $3}}}')
-    total=$(free -m |   awk '{if (NR==2) {{print $2}}}')
-    ram_usage=$( (bc -l <<< "scale=3; fract=($used / $total); scale=0; fract * 100") | xargs printf "%.0f")
+    used=$(free -m | awk '{if (NR==2) {{print $3}}}')
+    total=$(free -m | awk '{if (NR==2) {{print $2}}}')
+    ram_usage=$( (bc -l <<<"scale=3; fract=($used / $total); scale=0; fract * 100") | xargs printf "%.0f")
     test "$ram_usage" -gt 70
 }
 
@@ -62,7 +62,7 @@ is_user_state_ok() {
             export failed_user_name="$uname"
             return 1
         fi
-    done;
+    done
     return 0
 }
 
@@ -98,7 +98,7 @@ if [[ -e /var/run/reboot-required ]]; then
     status_bg=$WARNING_RED
     prepend_state "REBOOT"
 elif command -v systemctl >/dev/null 2>&1 &&
-        [[ "$(systemctl show --value --property=SystemState)" != 'running' ]]; then
+    [[ "$(systemctl show --value --property=SystemState)" != 'running' ]]; then
     status_fg=$TEXT_WHITE
     status_bg=$WARNING_RED
     prepend_state "System degraded"
@@ -132,12 +132,12 @@ else
         status_bg=$WARNING_ORANGE
         prepend_state "RAM $ram_usage%"
     fi
-    status_len=$(( ${#status_right} - NON_PRINTED_CHARS ))
+    status_len=$((${#status_right} - NON_PRINTED_CHARS))
     if [[ $status_len -lt 50 ]]; then
         prepend_state "$(hostname)"
     fi
 fi
-status_len=$(( ${#status_right} - NON_PRINTED_CHARS ))
+status_len=$((${#status_right} - NON_PRINTED_CHARS))
 
 tmux set-option -g status-right-length "$status_len"
 tmux set-option -g status-style bg=$status_bg,fg=$status_fg
