@@ -13,10 +13,32 @@ TEXT_WHITE='colour15'
 # The UTC part of the date has non-printed style data which is 20 chars long.
 NON_PRINTED_CHARS=20
 
+log_high_cpu() {
+    local last_logged=0
+    local log_ts
+    local logdir="$XDG_STATE_HOME/high_cpu_detail/"
+    local logfile
+    local log_frequency=60
+    mkdir -p "$logdir"
+    if [[ -f "$HOME/.local/state/high_cpu_detail/last-logged.txt" ]]; then
+        last_logged=$(cat "$logdir/last-logged.txt")
+    fi
+    current_timestamp=$(date -u +%s)
+    if (( (current_timestamp - last_logged) > log_frequency )); then
+        logfile="$logdir/high-load-$(date -u +'%Y%m%d').log"
+        log_ts=$(date -u +%Y-%m-%dT%H:%M:%S)
+        processes_to_log_count=10
+        echo "## [$log_ts] Details for $shown_load_type load at $adjusted_load_avg" >> "$logfile"
+        ps -eo pcpu,pid,user,args | tail -n +2 | sort -k1 -r -n | head -$processes_to_log_count | ts '[%Y-%m-%dT%H:%M:%S]' >> "$logfile"
+        date -u +%s > "$HOME/.local/state/high_cpu_detail/last-logged.txt"
+    fi
+}
+
 is_cpu_load_high() {
     local performance_cores
     local recent_load_avg
     local long_load_avg
+    local last_logged=0
     # Get number of cores on a system, excluding efficiency cores iff on an Alder Lake system
     performance_cores=$(lscpu --all --extended | tail -n +2 | awk '{ print $4 }' | uniq -c | awk '{ print $1 }' | uniq -c | head -n1 | awk '{ print $1 }')
     recent_load_avg=$(awk '{ print $1 }' /proc/loadavg) # 1 minute load average
@@ -24,19 +46,19 @@ is_cpu_load_high() {
     long_load_avg=$(awk '{ print $3 }' /proc/loadavg) # 15 minute load average
     long_load_avg=$(echo "( ${long_load_avg} / ${performance_cores} )" | bc -l | xargs printf "%.2f")
     if (($(echo "$recent_load_avg > $long_load_avg" | bc -l))); then
-        adjusted_load_avg=$recent_load_avg
-        shown_load_type='1m'
         if [[ "$(echo "$recent_load_avg > 0.8" | bc -l)" == 1 ]]; then
-            mkdir -p "$HOME/.local/state/pcpu_log/"
-            ps -eo pcpu,pid,user,args | tail -n +2 | sort -k1 -r -n | head -5 >"$HOME/.local/state/pcpu_log/high-load-$(date -u +'%Y-%m-%dT%H:%M:%S').log"
+            export adjusted_load_avg=$recent_load_avg
+            export shown_load_type='1m'
+            log_high_cpu
             return 0
         fi
-    else
-        adjusted_load_avg=$long_load_avg
-        # 70% CPU usage for 15 minutes is A LOT on my tiny systems.
-        shown_load_type='15m'
-        test "$(echo "$long_load_avg > 0.7" | bc -l)" = 1
+    # 70% CPU usage for 15 minutes is A LOT on my tiny systems.
+    elif [[ "$(echo "$long_load_avg > 0.7" | bc -l)" == 1 ]]; then
+        export adjusted_load_avg=$long_load_avg
+        export shown_load_type='15m'
+        return 0
     fi
+    return 1
 }
 
 is_disk_filling() {
