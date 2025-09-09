@@ -49,9 +49,9 @@ compute_initial_prompt() {
         uid_max=$(grep -m 1 uid_max "$users_stats_file" | cut -d ' ' -f 2)
         user_count=$(grep -m 1 user_count "$users_stats_file" | cut -d ' ' -f 2)
     elif [[ -f '/etc/login.defs' ]]; then
-        uid_primary=$(grep -m 1 -E '^UID_MIN\s' /etc/login.defs | cut -d ' ' -f 2)
-        uid_max=$(grep -m 1 -E '^UID_MAX\s' /etc/login.defs | cut -d ' ' -f 2)
-        user_count=2  #$(getent passwd | awk -F ':' "{ if (\$3 >= $uid_primary && \$3 <= $uid_max) { print \$3 } }" | wc -l)
+        uid_primary=$(grep -m 1 -E '^UID_MIN\s' /etc/login.defs | awk '{ print $2 }')
+        uid_max=$(grep -m 1 -E '^UID_MAX\s' /etc/login.defs | awk '{ print $2 }')
+        user_count=$(getent passwd | awk -F ':' "{ if (\$3 >= $uid_primary && \$3 <= $uid_max) { print \$3 } }" | wc -l)
         mkdir -p "$XDG_STATE_HOME/dotfiles"
         echo "uid_primary $uid_primary" > "$XDG_STATE_HOME/dotfiles/users.stats"
         echo "uid_max $uid_max" >> "$XDG_STATE_HOME/dotfiles/users.stats"
@@ -81,7 +81,7 @@ compute_initial_prompt() {
 
     # Only show the user name in the prompt if not currently signed in as the
     # primary (first) user on the system.
-    if [[ $(id -u) -ne $primary_uid ]]; then
+    if [[ $(id -u) != $uid_primary ]]; then
             system_parts=$user_style'%n%{%b%f%k%}'
             psvar[1]+="$(id -un)"
         fi
