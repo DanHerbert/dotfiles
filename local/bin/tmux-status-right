@@ -26,12 +26,16 @@ is_cpu_load_high() {
     if (($(echo "$recent_load_avg > $long_load_avg" | bc -l))); then
         adjusted_load_avg=$recent_load_avg
         shown_load_type='1m'
-        test "$(echo "$recent_load_avg > 0.7" | bc -l)" = 1
+        if [[ "$(echo "$recent_load_avg > 0.8" | bc -l)" == 1 ]]; then
+            mkdir -p "$HOME/.local/state/pcpu_log/"
+            ps -eo pcpu,pid,user,args | tail -n +2 | sort -k1 -r -n | head -5 >"$HOME/.local/state/pcpu_log/high-load-$(date -u +'%Y-%m-%dT%H:%M:%S').log"
+            return 0
+        fi
     else
         adjusted_load_avg=$long_load_avg
-        # 50% CPU usage for 15 minutes is A LOT on my tiny systems.
+        # 70% CPU usage for 15 minutes is A LOT on my tiny systems.
         shown_load_type='15m'
-        test "$(echo "$long_load_avg > 0.5" | bc -l)" = 1
+        test "$(echo "$long_load_avg > 0.7" | bc -l)" = 1
     fi
 }
 
