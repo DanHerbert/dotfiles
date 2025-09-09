@@ -35,9 +35,41 @@ compute_initial_prompt() {
         vcs_style='%{%F{#6d5840}%}' # Desaturated orange
     fi
 
+    local system_parts
+    local uid_primary=-1
+    local uid_max=60000
+    local user_count
+    # Getting system user info on MacOS is very slow and the values never change
+    # once the system is set up, so storing them in a file allows things to
+    # speed up
+    local user_stats_file="$XDG_STATE_HOME/dotfiles/users.stats"
+
+    if [[ -f "$users_stats_file" ]]; then
+        uid_primary=$(grep -m 1 uid_primary "$users_stats_file" | cut -d ' ' -f 2)
+        uid_max=$(grep -m 1 uid_max "$users_stats_file" | cut -d ' ' -f 2)
+        user_count=$(grep -m 1 user_count "$users_stats_file" | cut -d ' ' -f 2)
+    elif [[ -f '/etc/login.defs' ]]; then
+        uid_primary=$(grep -m 1 -E '^UID_MIN\s' /etc/login.defs | cut -d ' ' -f 2)
+        uid_max=$(grep -m 1 -E '^UID_MAX\s' /etc/login.defs | cut -d ' ' -f 2)
+        user_count=2  #$(getent passwd | awk -F ':' "{ if (\$3 >= $uid_primary && \$3 <= $uid_max) { print \$3 } }" | wc -l)
+        mkdir -p "$XDG_STATE_HOME/dotfiles"
+        echo "uid_primary $uid_primary" > "$XDG_STATE_HOME/dotfiles/users.stats"
+        echo "uid_max $uid_max" >> "$XDG_STATE_HOME/dotfiles/users.stats"
+        echo "user_count $user_count" >> "$XDG_STATE_HOME/dotfiles/users.stats"
+    # MacOS and BSD systems don't use the same login conventions as Linux.
+    elif command -v dscl >/dev/null 2>&1; then
+        real_user_list=$(dscl . list /Users | grep -v '^_' | xargs  -I % sh -c '[ -d /Users/% ] && echo %')
+        uid_primary="$(id -u $(echo "$real_user_list" | head -1))"
+        user_count=$(echo "$real_user_list" | wc -l)
+        mkdir -p "$XDG_STATE_HOME/dotfiles"
+        echo "uid_primary $uid_primary" > "$XDG_STATE_HOME/dotfiles/users.stats"
+        echo "uid_max $uid_max" >> "$XDG_STATE_HOME/dotfiles/users.stats"
+        echo "user_count $user_count" >> "$XDG_STATE_HOME/dotfiles/users.stats"
+    fi
+
     # root user styles. Intentionally meant to call attention to remind me to avoid
     # lingering in this state for too long.
-    if [[ $EUID == 0 ]]; then
+    if [[ $EUID == 0 ]] && [[ $user_count > 0 ]]; then
         user_style='%{%B%F{255}%K{196}%}' # Bright red
         # Note the extra # inserted at the end to make it more "annoying"
         access_style='%{%B%F{200}%}%#' # Hot pink
@@ -47,20 +79,6 @@ compute_initial_prompt() {
         fi
     fi
 
-    local system_parts
-    local primary_uid=-1
-    if [[ -f '/etc/login.defs' ]]; then
-        primary_uid=$(grep -m 1 UID_MIN /etc/login.defs | cut -d ' ' -f 2)
-    # MacOS and BSD systems don't use the same login conventions that linux does
-    # so we need to resort to different methods to figure out if we're currently
-    # logged in as the primary system user.
-    elif command -v dscl >/dev/null 2>&1; then
-        primary_uid="$(id -u $(dscl . list /Users | grep -v '^_' | xargs  -I % sh -c '[ -d /Users/% ] && echo %'))"
-        if [[ $(id -u) -ne $primary_uid ]]; then
-            system_parts=$user_style'%n%{%b%f%k%}'
-            psvar[1]+="$(id -un)"
-        fi
-    fi
     # Only show the user name in the prompt if not currently signed in as the
     # primary (first) user on the system.
     if [[ $(id -u) -ne $primary_uid ]]; then
