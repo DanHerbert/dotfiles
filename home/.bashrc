@@ -29,6 +29,8 @@ fi
 
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 export HISTCONTROL=ignorespace:ignoredups:erasedups
+export HISTSIZE=1000
+export HISTFILESIZE=2000
 export EDITOR='/usr/bin/vim'
 export SUDO_EDITOR='/usr/bin/vim'
 
