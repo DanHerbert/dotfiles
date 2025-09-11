@@ -24,6 +24,7 @@
     },
     "files.associations": {
         "*.json5": "jsonc",
+        "*.opf": "xml",
         "**/config/git/config": "properties",
         "**/cheat/cheatsheets/personal/**": "markdown",
         "**/fontconfig/*.conf": "xml",
