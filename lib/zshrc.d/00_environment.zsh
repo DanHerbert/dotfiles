@@ -8,9 +8,9 @@
 # has not loaded ~/.config/environment.d/ which my dotfiles depend on.
 if [[ -z $XDG_CONFIG_HOME ]]; then
     for conf in "$HOME"/.config/environment.d/*.conf; do
-        if [[ -L "$conf" ]] && [[ -e "$conf" ]]; then
+        if [[ -f "$conf" ]] || [[ -L "$conf" && -e "$conf" ]]; then
             set -a; source <(grep -vE '^#' "$conf"); set +a;
-        else
+        elif [[ -L "$conf" && ! -e "$conf" ]]; then
             echo "WARNING: environment conf symlink is broken [$conf]" >&2
         fi
     done
