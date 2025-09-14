@@ -64,7 +64,9 @@ alias lessv="$VIMRUNTIME/macros/less.sh"
 # --partial Don't delete partial transfers (makes resuming easier)
 # --info=flist2,progress2 Overall progress, not individual files
 # --human-readable Use human units
-alias rsync='rsync --verbose --update --partial --info=flist2,progress2 --human-readable'
+alias rsync='rsync --verbose --update --partial --info=flist2,progress2 --human-readable --exclude="/.git" --filter=":- .gitignore"'
+# Same as above, but respect git and .gitignore files.
+alias grsync='--human-readable --exclude="/.git" --filter=":- .gitignore" rsync --verbose --update --partial --info=flist2,progress2'
 
 # zsh seems to automatically map completions of this to git, but bash does not.
 alias g="$(command -v git 2>/dev/null)"
