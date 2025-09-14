@@ -75,21 +75,33 @@ is_ram_use_high() {
     test "$ram_usage" -gt 70
 }
 
-is_user_state_ok() {
-    local user_names
-    local user_system_state
-    if ! command -v loginctl >/dev/null 2>&1 || ! command -v systemctl >/dev/null 2>&1; then
-        return 0
+is_system_ok() {
+    local system_state_path="$XDG_STATE_HOME/dotfiles/system_state"
+    local lines
+    local line
+    local user
+    local state
+    local timestamp
+    local relative_ts
+    if [[ -e "$system_state_path" ]]; then
+        mapfile -t lines < <(cat "$system_state_path")
+        for line in "${lines[@]}"; do
+            user=$(echo "$line" | awk '{ print $1 }')
+            state=$(echo "$line" | awk '{ print $2 }')
+            timestamp=$(echo "$line" | awk '{ print $3 }')
+            relative_ts="$(ts_to_relative "$timestamp")"
+            if [[ "$state" != 'running' ]]; then
+                export degraded_user="$user"
+                export degraded_relative_ts="$relative_ts"
+                return 1
+            fi
+        done
     fi
-    mapfile -t user_names < <(loginctl list-users | tail -n+2 | head -n-2 | grep 'yes' | awk '{ print $2 }')
-    for uname in "${user_names[@]}"; do
-        user_system_state="$(sudo --non-interactive systemctl --machine="$uname"@ --user show --value --property=SystemState)"
-        if [[ "$user_system_state" != 'running' ]]; then
-            export failed_user_name="$uname"
-            return 1
-        fi
-    done
     return 0
+}
+ts_to_relative() {
+    unix_ts=$1
+    systemd-analyze timestamp "$(date -d @"$unix_ts" --iso-8601=seconds)" | grep 'From now:' | awk -F ':' '{ print $2 }' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
 }
 
 prepend_state() {
@@ -123,15 +135,14 @@ if [[ -e /var/run/reboot-required ]]; then
     status_fg=$TEXT_WHITE
     status_bg=$WARNING_RED
     prepend_state "REBOOT"
-elif command -v systemctl >/dev/null 2>&1 &&
-    [[ "$(systemctl show --value --property=SystemState)" != 'running' ]]; then
+elif ! is_system_ok; then
     status_fg=$TEXT_WHITE
     status_bg=$WARNING_RED
-    prepend_state "System degraded"
-elif ! is_user_state_ok; then
-    status_fg=$TEXT_WHITE
-    status_bg=$WARNING_RED
-    prepend_state "User $failed_user_name degraded"
+    if [[ $degraded_user == 'root' ]]; then
+        prepend_state "System is degraded since $degraded_relative_ts"
+    else
+        prepend_state "$degraded_user degraded since $degraded_relative_ts"
+    fi
 else
     if command -v mail >/dev/null 2>&1 && mail -e >/dev/null 2>&1; then
         status_fg=$TEXT_WHITE
