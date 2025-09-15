@@ -1,0 +1,6 @@
+For machines behind a NAT router, checking the `hostname` command will always
+report the LAN hostname. If an SSH client session originates outside of the LAN
+I want the public hostname to be shown in the shell prompt. To do this:
+
+Create a file named "hostname-public.txt" within this directory with the
+contents being the public hostname for the machine.

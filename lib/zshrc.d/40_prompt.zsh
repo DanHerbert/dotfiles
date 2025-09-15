@@ -35,6 +35,8 @@ compute_initial_prompt() {
         vcs_style='%{%F{#6d5840}%}' # Desaturated orange
     fi
 
+    local dotfiles_config_dir="$XDG_CONFIG_HOME/dotfiles"
+    local user_stats_file="$XDG_STATE_HOME/dotfiles/users_stats"
     local system_parts
     local uid_primary=-1
     local uid_max=60000
@@ -42,8 +44,6 @@ compute_initial_prompt() {
     # Getting system user info on MacOS is very slow and the values never change
     # once the system is set up, so storing them in a file allows things to
     # speed up
-    local user_stats_file="$XDG_STATE_HOME/dotfiles/users.stats"
-
     if [[ -f "$users_stats_file" ]]; then
         uid_primary=$(grep -m 1 uid_primary "$users_stats_file" | cut -d ' ' -f 2)
         uid_max=$(grep -m 1 uid_max "$users_stats_file" | cut -d ' ' -f 2)
@@ -53,18 +53,18 @@ compute_initial_prompt() {
         uid_max=$(grep -m 1 -E '^UID_MAX\s' /etc/login.defs | awk '{ print $2 }')
         user_count=$(getent passwd | awk -F ':' "{ if (\$3 >= $uid_primary && \$3 <= $uid_max) { print \$3 } }" | wc -l)
         mkdir -p "$XDG_STATE_HOME/dotfiles"
-        echo "uid_primary $uid_primary" > "$XDG_STATE_HOME/dotfiles/users.stats"
-        echo "uid_max $uid_max" >> "$XDG_STATE_HOME/dotfiles/users.stats"
-        echo "user_count $user_count" >> "$XDG_STATE_HOME/dotfiles/users.stats"
+        echo "uid_primary $uid_primary" > "$user_stats_file"
+        echo "uid_max $uid_max" >> "$user_stats_file"
+        echo "user_count $user_count" >> "$user_stats_file"
     # MacOS and BSD systems don't use the same login conventions as Linux.
     elif command -v dscl >/dev/null 2>&1; then
         real_user_list=$(dscl . list /Users | grep -v '^_' | xargs  -I % sh -c '[ -d /Users/% ] && echo %')
         uid_primary="$(id -u $(echo "$real_user_list" | head -1))"
         user_count=$(echo "$real_user_list" | wc -l)
-        mkdir -p "$XDG_STATE_HOME/dotfiles"
-        echo "uid_primary $uid_primary" > "$XDG_STATE_HOME/dotfiles/users.stats"
-        echo "uid_max $uid_max" >> "$XDG_STATE_HOME/dotfiles/users.stats"
-        echo "user_count $user_count" >> "$XDG_STATE_HOME/dotfiles/users.stats"
+        mkdir -p "$(dirname -- $user_stats_file)"
+        echo "uid_primary $uid_primary" > "$user_stats_file"
+        echo "uid_max $uid_max" >> "$user_stats_file"
+        echo "user_count $user_count" >> "$user_stats_file"
     fi
 
     # root user styles. Intentionally meant to call attention to remind me to avoid
@@ -91,8 +91,8 @@ compute_initial_prompt() {
             psvar[1]+='@'
         fi
         ssh_client_ip=$(echo $SSH_CLIENT | awk '{ print $1 }')
-        if [[ -f "$XDG_CONFIG_HOME/hostname-public.txt" ]] && [[ "$ssh_client_ip" == "$(gatewayip)" ]]; then
-            public_host=$(cat "$XDG_CONFIG_HOME/hostname-public.txt")
+        if [[ -f "$dotfiles_config_dir/hostname-public.txt" ]] && [[ "$ssh_client_ip" == "$(gatewayip)" ]]; then
+            public_host=$(cat "$dotfiles_config_dir/hostname-public.txt")
             system_parts+=$host_style$public_host'%{%f%}'
             psvar[1]+="$public_host"
         else

@@ -76,13 +76,8 @@ is_ram_use_high() {
 }
 
 is_system_ok() {
-    local system_state_path="$XDG_STATE_HOME/dotfiles/system_state"
-    local lines
-    local line
-    local user
-    local state
-    local timestamp
-    local relative_ts
+    local system_state_path lines line user state timestamp relative_ts
+    system_state_path="$XDG_STATE_HOME/dotfiles/system_state"
     if [[ -e "$system_state_path" ]]; then
         mapfile -t lines < <(cat "$system_state_path")
         for line in "${lines[@]}"; do
@@ -99,6 +94,29 @@ is_system_ok() {
     fi
     return 0
 }
+
+mail_check() {
+    local mail_state_path lines line user state
+    mail_state_path="$XDG_STATE_HOME/dotfiles/mail_state"
+    if [[ -e "$mail_state_path" ]]; then
+        mapfile -t lines < <(cat "$mail_state_path")
+        for line in "${lines[@]}"; do
+            user=$(echo "$line" | awk '{ print $1 }')
+            state=$(echo "$line" | awk '{ print $2 }')
+            if [[ "$state" == 'yes' ]]; then
+                status_fg=$TEXT_WHITE
+                status_bg=$INFO_BLUE
+                if [[ $user == "$USER" ]]; then
+                    prepend_state "New mail!"
+                else
+                    prepend_state "New mail for $user!"
+                fi
+                return 0
+            fi
+        done
+    fi
+}
+
 ts_to_relative() {
     unix_ts=$1
     systemd-analyze timestamp "$(date -d @"$unix_ts" --iso-8601=seconds)" | grep 'From now:' | awk -F ':' '{ print $2 }' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
@@ -144,16 +162,7 @@ elif ! is_system_ok; then
         prepend_state "$degraded_user degraded since $degraded_relative_ts"
     fi
 else
-    if command -v mail >/dev/null 2>&1 && mail -e >/dev/null 2>&1; then
-        status_fg=$TEXT_WHITE
-        status_bg=$INFO_BLUE
-        prepend_state "New mail!"
-    fi
-    if command -v mail >/dev/null 2>&1 && sudo --non-interactive mail -e >/dev/null 2>&1; then
-        status_fg=$TEXT_WHITE
-        status_bg=$INFO_BLUE
-        prepend_state "New mail for root!"
-    fi
+    mail_check
     if is_cpu_load_high; then
         status_fg=$TEXT_WHITE
         status_bg=$WARNING_ORANGE
@@ -172,6 +181,7 @@ else
     status_len=$((${#status_right} - NON_PRINTED_CHARS))
     if [[ $status_len -lt 50 ]]; then
         prepend_state "$(hostname)"
+        prepend_state "$(uptime | awk -F ',' '{print $1}' | sed -E 's/\s+[0-9:]{8}\s//')"
     fi
 fi
 status_len=$((${#status_right} - NON_PRINTED_CHARS))
