@@ -72,7 +72,7 @@ is_ram_use_high() {
     used=$(free -m | awk '{if (NR==2) {{print $3}}}')
     total=$(free -m | awk '{if (NR==2) {{print $2}}}')
     ram_usage=$( (bc -l <<<"scale=3; fract=($used / $total); scale=0; fract * 100") | xargs printf "%.0f")
-    test "$ram_usage" -gt 70
+    test "$ram_usage" -gt 80
 }
 
 is_system_ok() {
