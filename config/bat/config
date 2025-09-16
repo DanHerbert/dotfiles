@@ -6,3 +6,4 @@
 # Systemd unit files
 --map-syntax "*.service,*.timer,*.path,*.mount,*.socket,*.slice,*.target:INI"
 --map-syntax "**/apt/apt.conf.d/*:C++"
+--map-syntax "**/smb.conf,**/etckeeper.conf:INI"
