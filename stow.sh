@@ -160,15 +160,6 @@ timer_start
 # speed up this command quite a bit if the lines included.
 has_shown_header=0
 find "$U_HOME"/.* \
-        -path "$PROJECT_ROOT" -type d -prune -o \
-        -path "$U_HOME/code" -type d -prune -o \
-        -path "$U_HOME/Downloads" -type d -prune -o \
-        -path "$U_HOME/Documents" -type d -prune -o \
-        -path "$U_HOME/Desktop" -type d -prune -o \
-        -path "$U_HOME/Music" -type d -prune -o \
-        -path "$U_HOME/Pictures" -type d -prune -o \
-        -path "$U_HOME/Videos" -type d -prune -o \
-        -path "$U_HOME/Public" -type d -prune -o \
         -path "$U_HOME/.cache" -type d -prune -o \
         -path "$U_HOME/.local/state/cargo" -type d -prune -o \
         -path "$U_HOME/.local/state/rustup" -type d -prune -o \
