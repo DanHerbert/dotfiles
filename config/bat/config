@@ -7,3 +7,4 @@
 --map-syntax "**/apt/apt.conf.d/*:C++"
 --map-syntax "etckeeper.conf:INI"
 --map-syntax "smb.conf:INI"
+--map-syntax "**/pacman.d/mirrorlist:INI"
