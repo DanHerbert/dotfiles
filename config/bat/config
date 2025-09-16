@@ -3,7 +3,7 @@
 --italic-text always
 --pager="less --RAW-CONTROL-CHARS"
 --map-syntax "**/.ssh/config.d/*.conf:SSH Config"
-# Systemd unit files
 --map-syntax "*.service,*.timer,*.path,*.mount,*.socket,*.slice,*.target:INI"
 --map-syntax "**/apt/apt.conf.d/*:C++"
---map-syntax "**/smb.conf,**/etckeeper.conf:INI"
+--map-syntax "etckeeper.conf:INI"
+--map-syntax "smb.conf:INI"
