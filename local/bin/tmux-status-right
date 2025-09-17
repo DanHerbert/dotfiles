@@ -161,6 +161,10 @@ elif ! is_system_ok; then
     else
         prepend_state "$degraded_user degraded since $degraded_relative_ts"
     fi
+elif [[ -e "$XDG_STATE_HOME/dotfiles/raid_failure" ]]; then
+    status_fg=$TEXT_WHITE
+    status_bg=$WARNING_RED
+    prepend_state "RAID array problem"
 else
     mail_check
     if is_cpu_load_high; then
