@@ -28,7 +28,11 @@
         "**/config/git/config": "properties",
         "**/cheat/cheatsheets/personal/**": "markdown",
         "**/fontconfig/*.conf": "xml",
-        "**/*-flags.conf": "plaintext"
+        "**/*.d/*.conf": "plaintext",
+        "**/environment.d/*.conf": "plaintext",
+        "**/*-flags.conf": "plaintext",
+        "**/mkinitcpio.d/*.preset": "properties",
+        "**/etckeeper.conf": "ini"
     },
     "[shellscript]": {
         "editor.tabSize": 4,
