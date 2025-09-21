@@ -150,10 +150,10 @@ fi
 # Although this script should only ever stow files and not touch real files,
 # these 2 specific files are treated as special simply to make installing
 # dotfiles easier.
-if [ -f "$HOME/.ssh/config" ]; then
+if [ -f "$HOME/.ssh/config" ] && [ ! -L "$HOME/.ssh/config" ]; then
     mv "$HOME/.ssh/config" "$HOME/ssh_config_$(date -u +%Y-%m-%d)"
 fi
-if [ -f "$HOME/.bashrc" ]; then
+if [ -f "$HOME/.bashrc" ] && [ ! -L "$HOME/.bashrc" ]; then
     mv "$HOME/.bashrc" "$HOME/original_$(date -u +%Y-%m-%d).bashrc"
 fi
 
