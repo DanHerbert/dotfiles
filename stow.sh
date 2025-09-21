@@ -147,6 +147,16 @@ if [ -z "$XDG_CONFIG_HOME" ] && [ ! -f "$U_HOME/.zshenv" ]; then
     echo "Created [$U_HOME/.zshenv] to ensure ZSH runs correctly."
 fi
 
+# Although this script should only ever stow files and not touch real files,
+# these 2 specific files are treated as special simply to make installing
+# dotfiles easier.
+if [ -f "$HOME/.ssh/config" ]; then
+    mv "$HOME/.ssh/config" "$HOME/ssh_config_$(date -u +%Y-%m-%d)"
+fi
+if [ -f "$HOME/.bashrc" ]; then
+    mv "$HOME/.bashrc" "$HOME/original_$(date -u +%Y-%m-%d).bashrc"
+fi
+
 timer_start
 ( export PS4=''; set -xe
 stow --verbose=1 --target="$U_HOME/.config" config
