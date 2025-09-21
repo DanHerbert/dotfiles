@@ -114,10 +114,10 @@ do_debian_install() {
 do_os_config() {
     cd "$(get_dotfiles_parent_dir "$USER")/dotfiles"
     if ! grep 'SUDO_EDITOR' /etc/environment; then
-        (set -x; cat ./setup/etc/environment | sudo tee -a /etc/environment)
+        (set -x; cat ./root/etc/environment | sudo tee -a /etc/environment)
     fi
     if [[ -d '/etc/etckeeper' ]]; then
-        (set -x; sudo cp ./setup/etc/etckeeper/commit.d/50vcs-commit /etc/etckeeper/commit.d/)
+        (set -x; sudo cp ./root/etc/etckeeper/commit.d/50vcs-commit /etc/etckeeper/commit.d/)
         (set -x; sudo sed -i "s/GIT_COMMIT_OPTIONS=\"\"/GIT_COMMIT_OPTIONS='--author=\"etckeeper <etckeeper@$(hostname)>\"'/" /etc/etckeeper/etckeeper.conf)
     fi
 }
