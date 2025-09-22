@@ -27,6 +27,7 @@ alias lst='ls --color=auto --group-directories-first -pt'
 
 alias mv='mv -i'
 alias cp='cp -i'
+alias rm='rm -I'  # Interactive, but only for large changes.
 
 # Force diff to use color by default.
 alias diff='diff --color'
