@@ -5,6 +5,7 @@
 --map-syntax "**/.ssh/config.d/*.conf:SSH Config"
 --map-syntax "*.service,*.timer,*.path,*.mount,*.socket,*.slice,*.target:INI"
 --map-syntax "**/apt/apt.conf.d/*:C++"
+--map-syntax "**/apt/sources.list.d/*.sources:YAML"
 --map-syntax "etckeeper.conf:INI"
 --map-syntax "smb.conf:INI"
 --map-syntax "**/pacman.d/mirrorlist:INI"
