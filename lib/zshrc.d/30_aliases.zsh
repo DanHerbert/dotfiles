@@ -70,6 +70,7 @@ alias rsync='rsync --verbose --update --partial --info=flist2,progress2 --human-
 # Same as above, but respect git and .gitignore files.
 alias grsync='--human-readable --exclude="/.git" --filter=":- .gitignore" rsync --verbose --update --partial --info=flist2,progress2'
 
+alias git-signed='git -c "user.name=Daniel P. Herbert" -c "user.email=dan-fe51843e@hrbrt.co"'
 # zsh seems to automatically map completions of this to git, but bash does not.
 alias g="$(command -v git 2>/dev/null)"
 
