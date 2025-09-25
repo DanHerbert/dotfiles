@@ -5,7 +5,7 @@
 #   b) Are not already installed.
 # Some package names listed here are intentional duplicates like 'pipx' and
 # 'python-pipx' which exist under different names in different package managers.
-dependencies=(bat bc build-essential cargo curl dash datamash dosfstools etckeeper fastfetch git glow go golang jq libssl-dev moreutils needrestart npm pipx pkg-config python-pip python-pipx python-virtualenv python3-pip python3-virtualenv ripgrep rsync shellcheck shfmt stow stress tig tmux traceroute tree vim wget xkcdpass zsh zsh-completions)
+dependencies=(bat bc build-essential cargo curl dash datamash dosfstools etckeeper fastfetch git glow go golang jq libssl-dev moreutils needrestart npm pipx pkg-config python-pip python-pipx python-virtualenv python3-pip python3-virtualenv ripgrep rsync shellcheck shfmt stow stress stress-ng tig tmux traceroute tree vim wget xkcdpass zsh zsh-completions)
 
 export DEBIAN_FRONTEND=noninteractive
 
