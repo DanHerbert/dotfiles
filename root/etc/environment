@@ -1,5 +1,5 @@
 BORG_EXIT_CODES=modern
-EDITOR=/usr/bin/vim
-PAGER="/usr/bin/less"
 SUDO_EDITOR=/usr/bin/vim
+EDITOR=/usr/bin/vim
+PAGER=/usr/bin/less
 TIME_STYLE='+%Y-%0m-%0dT%H:%M'

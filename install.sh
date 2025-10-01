@@ -20,7 +20,6 @@ main() {
     starttime="$(date +%s.%N)"
 
     do_ssh_setup
-    ssh -NT git@github.com
 
     if [ "$os_type" = 'Darwin' ]; then
         do_macos_install
@@ -41,27 +40,34 @@ main() {
 }
 
 do_ssh_setup() {
-    if [[ ! -f "$HOME/.ssh/keys/id_main" ]] && [[ ! -f "$HOME/.ssh/id_ed25519" ]]; then
+    if [[ ! -f "$HOME/.ssh/keys/id_main" ]]; then
         mkdir -p "$HOME/.ssh/keys/"
         (set -x; ssh-keygen -t ssh-ed25519 -C "$USER@$(hostname)" -P '' -f "$HOME/.ssh/keys/id_main")
         cat "$HOME/.ssh/keys/id_main.pub"
         read -srp "Copy SSH public key, then press Enter to continue."
-        if [[ ! -e "$HOME/.ssh/config" ]]; then
-            download_from_dotiles_repo 'home/.ssh/config' "$HOME/.ssh/config"
+    fi
+    if [[ ! -e "$HOME/.ssh/config" ]]; then
+        download_from_dotiles_repo 'home/.ssh/config' "$HOME/.ssh/config"
+    fi
+    ssh -NT git@github.com 2>/dev/null
+    ssh_files=( "keys/id_main" "keys/id_main.pub" "config" "known_hosts" )
+    for ssh_file in "${ssh_files[@]}"; do
+        user_file="$HOME/.ssh/$ssh_file"
+        root_file="/root/.ssh/$ssh_file"
+        has_root_file="$(sudo /bin/sh -c "test -f /root/.ssh/$ssh_file" || echo 1)"
+        if [[ -f "$user_file" ]] && [[ $has_root_file -eq 1 ]]; then
+            sudo mkdir -pv /root/.ssh/keys/
+            (set -x; sudo cp "$user_file" "$root_file")
         fi
-    fi
-    has_root_key=$(sudo /bin/sh -c 'test -e /root/.ssh/keys/id_main' || echo 1)
-    if ! $has_root_key; then
-        (set -x
-        sudo mkdir -p /root/.ssh/keys/
-        sudo cp "$HOME/.ssh/keys/id_main" "$HOME/.ssh/keys/id_main.pub" /root/.ssh/keys/
-        sudo cp "$HOME"/.ssh/config /root/.ssh/
-        sudo cp "$HOME"/.ssh/known_hosts /root/.ssh/
-        sudo chown -fR root:root /root/.ssh
-        sudo chmod -f 600 "$HOME/.ssh/keys/id_main"
-        sudo chmod -f 644 "$HOME/.ssh/keys/id_main.pub"
-        )
-    fi
+    done
+    (set -x
+    sudo chown -fR "$USER:$(id -gn "$USER")" "$HOME/.ssh"
+    sudo chmod -f 600 "$HOME/.ssh/keys/id_main"
+    sudo chmod -f 644 "$HOME/.ssh/keys/id_main.pub"
+    sudo chown -fR root:root /root/.ssh
+    sudo chmod -f 600 "$HOME/.ssh/keys/id_main"
+    sudo chmod -f 644 "$HOME/.ssh/keys/id_main.pub"
+    )
 }
 
 do_common_install() {
