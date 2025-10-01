@@ -28,11 +28,12 @@
         "**/config/git/config": "properties",
         "**/cheat/cheatsheets/personal/**": "markdown",
         "**/fontconfig/*.conf": "xml",
-        "**/*.d/*.conf": "plaintext",
+        "*.service.conf": "systemd-unit-file",
+        "**/*.d/*.conf": "systemd-unit-file",
         "**/environment.d/*.conf": "plaintext",
         "**/*-flags.conf": "plaintext",
         "**/mkinitcpio.d/*.preset": "properties",
-        "**/etckeeper.conf": "ini"
+        "**/etckeeper.conf": "ini",
     },
     "[shellscript]": {
         "editor.tabSize": 4,
@@ -70,5 +71,5 @@
     },
     "[javascript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
-    }
+    },
 }
