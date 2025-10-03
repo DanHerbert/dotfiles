@@ -174,7 +174,7 @@ do_dotfiles_install_for() {
     sudo -u "$install_user" /bin/sh -c "set -x; cd $dotfiles_parent_dir; git clone --recurse-submodules git@github.com:DanHerbert/dotfiles.git"
     sudo -u "$install_user" /bin/sh -c "set -x; cd $dotfiles_parent_dir/dotfiles; git pull --force --recurse-submodules"
     sudo -u "$install_user" /bin/sh -c "set -x; cd $dotfiles_parent_dir/dotfiles; git submodule update --init --recursive"
-    sudo -u "$install_user" /bin/sh -c "set -x; INSIDE_UPDATE_SCRIPT=1 $dotfiles_parent_dir/dotfiles/stow.sh"
+    sudo -u "$install_user" /bin/sh -c "set -x; NOT_SOURCED_OK=1 $dotfiles_parent_dir/dotfiles/stow.sh"
 
     echo "dotfiles have been installed for $install_user"
 }

@@ -4,7 +4,7 @@
 
 # is_sourced borrowed from https://stackoverflow.com/a/28776166
 is_sourced() {
-    if [ -n "$INSIDE_UPDATE_SCRIPT" ]; then
+    if [ -n "$NOT_SOURCED_OK" ]; then
         return 0
     fi
     if [ -n "$ZSH_VERSION" ]; then
