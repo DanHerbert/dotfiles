@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This script can update itself while running (since it updates through git)
 # All commands must happen within these curly brace blocks to ensure everything

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # This script is intentionally idempotent so that it can safely "sync" new files
 # when run repeatedly without any negative side-effects.
 
