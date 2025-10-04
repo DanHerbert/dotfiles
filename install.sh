@@ -49,7 +49,7 @@ do_ssh_setup() {
     if [[ ! -e "$HOME/.ssh/config" ]]; then
         download_from_dotiles_repo 'home/.ssh/config' "$HOME/.ssh/config"
     fi
-    ssh -NT git@github.com 2>/dev/null
+    ssh -NT git@github.com 2>/dev/null || true
     ssh_files=( "keys/id_main" "keys/id_main.pub" "config" "known_hosts" )
     for ssh_file in "${ssh_files[@]}"; do
         user_file="$HOME/.ssh/$ssh_file"
