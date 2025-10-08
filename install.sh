@@ -10,7 +10,8 @@ dependencies=(bat bc build-essential cargo curl dash datamash dosfstools etckeep
 export DEBIAN_FRONTEND=noninteractive
 
 main() {
-    parent_dir=$(get_dotfiles_parent_dir "$USER")
+    local install_user="$USER"
+    parent_dir=$(get_dotfiles_parent_dir "$install_user")
     if [[ -d "$parent_dir/dotfiles" ]]; then
         echo 'dotfiles appear to be installed. Doing nothing'
         exit 1
@@ -19,7 +20,7 @@ main() {
     os_type="$(uname -o)"
     starttime="$(date +%s.%N)"
 
-    do_ssh_setup
+    do_ssh_setup "$install_user"
 
     if [ "$os_type" = 'Darwin' ]; then
         do_macos_install
@@ -40,19 +41,22 @@ main() {
 }
 
 do_ssh_setup() {
-    if [[ ! -f "$HOME/.ssh/keys/id_main" ]]; then
-        mkdir -p "$HOME/.ssh/keys/"
-        (set -x; ssh-keygen -t ssh-ed25519 -C "$USER@$(hostname)" -P '' -f "$HOME/.ssh/keys/id_main")
-        cat "$HOME/.ssh/keys/id_main.pub"
+    local install_user="$1"
+    local u_home
+    u_home=$(eval echo "~${install_user}")
+    if [[ ! -f "$u_home/.ssh/keys/id_main" ]]; then
+        mkdir -p "$u_home/.ssh/keys/"
+        (set -x; sudo -u "$install_user" ssh-keygen -t ssh-ed25519 -C "$install_user@$(hostname)" -P '' -f "$u_home/.ssh/keys/id_main")
+        cat "$u_home/.ssh/keys/id_main.pub"
         read -srp "Copy SSH public key, then press Enter to continue."
     fi
-    if [[ ! -e "$HOME/.ssh/config" ]]; then
-        download_from_dotiles_repo 'home/.ssh/config' "$HOME/.ssh/config"
+    if [[ ! -e "$u_home/.ssh/config" ]]; then
+        download_from_dotiles_repo 'home/.ssh/config' "$u_home/.ssh/config" "$install_user"
     fi
     ssh -NT git@github.com 2>&1 | grep -o 'successfully authenticated'
     ssh_files=( "keys/id_main" "keys/id_main.pub" "config" "known_hosts" )
     for ssh_file in "${ssh_files[@]}"; do
-        user_file="$HOME/.ssh/$ssh_file"
+        user_file="$u_home/.ssh/$ssh_file"
         root_file="/root/.ssh/$ssh_file"
         has_root_file="$(sudo /bin/sh -c "test -f /root/.ssh/$ssh_file" || echo 1)"
         if [[ -f "$user_file" ]] && [[ $has_root_file -eq 1 ]]; then
@@ -61,12 +65,12 @@ do_ssh_setup() {
         fi
     done
     (set -x
-    sudo chown -fR "$USER:$(id -gn "$USER")" "$HOME/.ssh"
-    sudo chmod -f 600 "$HOME/.ssh/keys/id_main"
-    sudo chmod -f 644 "$HOME/.ssh/keys/id_main.pub"
+    sudo chown -fR "$install_user:$(id -gn "$install_user")" "$u_home/.ssh"
+    sudo chmod -f 600 "$u_home/.ssh/keys/id_main"
+    sudo chmod -f 644 "$u_home/.ssh/keys/id_main.pub"
     sudo chown -fR root:root /root/.ssh
-    sudo chmod -f 600 "$HOME/.ssh/keys/id_main"
-    sudo chmod -f 644 "$HOME/.ssh/keys/id_main.pub"
+    sudo chmod -f 600 "$u_home/.ssh/keys/id_main"
+    sudo chmod -f 644 "$u_home/.ssh/keys/id_main.pub"
     )
 }
 
@@ -96,15 +100,14 @@ do_gnulinux_install() {
 }
 
 do_common_linux_install() {
-    set -x
+    (set -x
     sudo etckeeper init
     sudo /bin/sh -c "set -x; cd /etc && git config user.name '$USER' && git config user.email '$USER@$(hostname)'"
     sudo etckeeper commit 'Configure etckeeper repo authorship'
 
     sudo chsh -s '/usr/bin/zsh' "$USER"
     sudo chsh -s '/usr/bin/zsh' 'root'
-
-    set +x
+    )
 
     do_common_install
     do_os_config
@@ -184,15 +187,15 @@ do_dotfiles_install_for() {
 }
 
 download_from_dotiles_repo() {
-    rel_path="$1"
-    out_path="$2"
+    local rel_path="$1"
+    local out_path="$2"
+    local install_user="$3"
     dl_url="https://raw.githubusercontent.com/DanHerbert/dotfiles/refs/heads/main/$rel_path"
     if command -v curl >/dev/null 2>&1; then
-        curl -o "$out_path" "$dl_url" 2>/dev/null
+        sudo -u "$install_user" curl -o "$out_path" "$dl_url" 2>/dev/null
     elif command -v wget >/dev/null 2>&1; then
-        wget -O "$out_path" "$dl_url" 2>/dev/null
+        sudo -u "$install_user" wget -O "$out_path" "$dl_url" 2>/dev/null
     fi
-    chmod +x "$out_path"
 }
 
 main
