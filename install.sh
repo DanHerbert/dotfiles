@@ -53,7 +53,8 @@ do_ssh_setup() {
     if [[ ! -e "$HOME/.ssh/config" ]]; then
         download_from_dotiles_repo 'home/.ssh/config' "$HOME/.ssh/config" "$USER"
     fi
-    ssh -NT git@github.com 2>&1 | grep -o 'successfully authenticated'
+    ssh -NT git@github.com 2>/dev/null || true
+    ssh ssh -o BatchMode=yes -NT git@github.com 2>&1 | grep -o 'successfully authenticated'
     ssh_files=( "keys/id_main" "keys/id_main.pub" "config" "known_hosts" )
     for ssh_file in "${ssh_files[@]}"; do
         user_file="$HOME/.ssh/$ssh_file"
