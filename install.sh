@@ -169,7 +169,7 @@ do_dotfiles_install_for() {
     u_home=$(eval echo "~${install_user}")
 
     dotfiles_parent_dir=$(get_dotfiles_parent_dir "$install_user")
-    mkdir -p "$dotfiles_parent_dir"
+    sudo -u "$install_user" mkdir -p "$dotfiles_parent_dir"
 
     sudo -u "$install_user" /bin/sh -c "set -x; cd $dotfiles_parent_dir; git clone --recurse-submodules git@github.com:DanHerbert/dotfiles.git"
     if [[ ! -d "$dotfiles_parent_dir/dotfiles/.git" ]]; then
