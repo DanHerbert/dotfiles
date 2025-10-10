@@ -54,7 +54,7 @@ do_ssh_setup() {
         download_from_dotiles_repo 'home/.ssh/config' "$HOME/.ssh/config" "$USER"
     fi
     ssh -NT git@github.com 2>/dev/null || true
-    ssh ssh -o BatchMode=yes -NT git@github.com 2>&1 | grep -o 'successfully authenticated'
+    ssh -o BatchMode=yes -NT git@github.com 2>&1 | grep -qo 'successfully authenticated'
     ssh_files=( "keys/id_main" "keys/id_main.pub" "config" "known_hosts" )
     for ssh_file in "${ssh_files[@]}"; do
         user_file="$HOME/.ssh/$ssh_file"
@@ -176,12 +176,11 @@ do_dotfiles_install_for() {
     sudo -u "$install_user" mkdir -p "$dotfiles_parent_dir"
 
     sudo -u "$install_user" /bin/sh -c "set -x; cd $dotfiles_parent_dir; git clone --recurse-submodules git@github.com:DanHerbert/dotfiles.git"
-    if [[ ! -d "$dotfiles_parent_dir/dotfiles/.git" ]]; then
+    clone_succeeded=$(sudo -u "$install_user" test -d "$dotfiles_parent_dir/dotfiles/.git" && echo 0)
+    if [[ ! $clone_succeeded ]]; then
         echo "git clone failed for $install_user"
         exit 1
     fi
-    sudo -u "$install_user" /bin/sh -c "set -x; cd $dotfiles_parent_dir/dotfiles; git pull --rebase --force --recurse-submodules"
-    sudo -u "$install_user" /bin/sh -c "set -x; cd $dotfiles_parent_dir/dotfiles; git submodule update --init --recursive"
     sudo -u "$install_user" /bin/sh -c "set -x; NOT_SOURCED_OK=1 $dotfiles_parent_dir/dotfiles/stow.sh"
 
     echo "dotfiles have been installed for $install_user"
