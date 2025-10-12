@@ -43,6 +43,7 @@ fi
 # variables defined with ~/.config/environment.d/*.conf within SSH sessions
 # without any shell RC hacks.
 SSH_TMUX_CMD="/usr/bin/systemd-run --user -E SSH_CLIENT=\"\$SSH_CLIENT\" -E SSH_CONNECTION=\"\$SSH_CONNECTION\" -E SSH_TTY=\"\$SSH_TTY\" --pty --same-dir --wait --collect --service-type=exec /usr/bin/dash -c '/usr/bin/systemd-run --scope --user /usr/bin/tmux new -As work 2>/dev/null' 2> /dev/null"
+SSH_TMUX_CMD_DEBUG="set -x; /usr/bin/systemd-run --user -E SSH_CLIENT=\"\$SSH_CLIENT\" -E SSH_CONNECTION=\"\$SSH_CONNECTION\" -E SSH_TTY=\"\$SSH_TTY\" --pty --same-dir --wait --collect --service-type=exec /usr/bin/dash -c 'set -x; /usr/bin/systemd-run --scope --user /usr/bin/tmux new -As work'"
 
 typeset -F SECONDS  # Use floating point numbers for command time.
 ZSH_COMMAND_TIME_COLOR="250"  # Gray
