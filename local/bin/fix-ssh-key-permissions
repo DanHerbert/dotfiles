@@ -1,8 +1,13 @@
 #!/bin/bash
-shopt -s extglob
 
-set -v
-primary_group=$(id -gn "$USER")
-sudo chown -fc "$USER":"$primary_group" "$HOME"/{.ssh,.ssh/keys}/id_*
-sudo chmod -fc 600 "$HOME"/{.ssh,.ssh/keys}/id_!(*\.pub)
-sudo chmod -fc 644 "$HOME"/{.ssh,.ssh/keys}/id_*.pub
+for u_home in {/Users/*,/home/*,/root}; do
+    if [[ ! -d "$u_home" ]]; then
+        continue
+    fi
+    # shellcheck disable=SC2012
+    home_owner=$(ls -ld "$u_home" | awk '{print $3}')
+    primary_group=$(id -gn "$home_owner")
+    sudo /bin/bash -c "shopt -s extglob; set -x; chown -fc $home_owner:$primary_group $u_home/{.ssh,.ssh/keys}/id_*"
+    sudo /bin/bash -c "shopt -s extglob; set -x; chmod -fc 600 $u_home/{.ssh,.ssh/keys}/id_!\(*\.pub\)"
+    sudo /bin/bash -c "shopt -s extglob; set -x; chmod -fc 644 $u_home/{.ssh,.ssh/keys}/id_*.pub"
+done
