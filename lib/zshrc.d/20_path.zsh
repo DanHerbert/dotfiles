@@ -14,4 +14,5 @@ fi
 path=("$RUSTUP_HOME/bin" "$path[@]")
 path=("$CARGO_HOME/bin" "$path[@]")
 path=("$GOPATH/bin" "$path[@]")
+path=("$PNPM_HOME" "$path[@]")
 path=("$HOME/.local/bin" "$path[@]")
