@@ -6,8 +6,11 @@
 SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 SCRIPT_OWNER=$(stat -c "%U" "$SCRIPT_DIR")
 
-starting_path=":$PATH:"
-modified_path="$(echo "$starting_path" | sed "s|:$SCRIPT_DIR:|:|")"
+modified_path=":$PATH:"
+while [ "${modified_path#*":$SCRIPT_DIR:"}" != "$modified_path" ]; do
+    modified_path=":$modified_path:"
+    modified_path="$(echo "$modified_path" | sed "s|:$SCRIPT_DIR:|:|")"
+done
 real_wget="$(PATH="$modified_path" command -v wget 2>/dev/null)"
 if [ -z "${real_wget}" ]; then
     shell_name="$(basename "${SHELL}")"

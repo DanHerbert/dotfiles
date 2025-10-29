@@ -3,8 +3,11 @@
 # stops if the file isn't writable.
 
 SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
-starting_path=":$PATH:"
-modified_path="$(echo "$starting_path" | sed "s|:$SCRIPT_DIR:|:|")"
+modified_path=":$PATH:"
+while [ "${modified_path#*":$SCRIPT_DIR:"}" != "$modified_path" ]; do
+    modified_path=":$modified_path:"
+    modified_path="$(echo "$modified_path" | sed "s|:$SCRIPT_DIR:|:|")"
+done
 real_vim="$(PATH="$modified_path" command -v vim 2>/dev/null)"
 if [ -z "${real_vim}" ]; then
     shell_name="$(basename "$0")"
