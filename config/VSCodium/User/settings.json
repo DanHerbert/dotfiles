@@ -73,4 +73,5 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "chat.disableAIFeatures": true,
+    "typos.config": "~/.config/typos/typos.toml"
 }

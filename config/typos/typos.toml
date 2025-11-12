@@ -1,0 +1,3 @@
+[default.extend-words]
+# .opf is a valid file extension in ebooks.
+opf = "opf"
