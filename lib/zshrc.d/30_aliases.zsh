@@ -41,7 +41,7 @@ alias dateutc='date -u +%Y-%m-%dT%H:%M:%S%z'
 # In both cases, these messages are noise so I want them sent to a logfile
 # instead. We should also make sure the "ts" command (part of moreutils package)
 # exists so we can prepend timestamps to all logs.
-if ! command -v code >/dev/null 2>&1 && command -v ts >/dev/null 2>&1; then
+if ! command -v code >/dev/null 2>&1 && command -v codium >/dev/null 2>&1 && command -v ts >/dev/null 2>&1; then
     alias code="codium 2> >(mkdir -p $XDG_STATE_HOME/codium; ts '[%Y-%m-%dT%H:%M:%S]' >> $XDG_STATE_HOME/codium/errors.log)"
 fi
 
